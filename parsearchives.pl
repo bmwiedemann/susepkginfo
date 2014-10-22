@@ -22,11 +22,8 @@ while(<>) {
         my ($arch, $pkgname)=($1, $2);
         if ($info=~m/^Version\s*: (\S+)/) {$data{$pkgname}{version}=$1}
         if ($info=~m/^Release\s*: (\S+)/) {$data{$pkgname}{release}=$1}
-        if ($info=~m/^Source RPM\s*: (\S+)\.rpm/) {
-            my $src=$1;
-            $src=~s/\.src$//;
-            $src=~s/-[^-]+-[^-]+$//; # strip -version-release
-            $data{$pkgname}{srcpkg}=$src;
+        if ($info=~m/^Source RPM\s*: (\S+)-[^-]+-[^-]+\.\w+\.rpm$/) {
+            $data{$pkgname}{srcpkg}=$1;
         } elsif ($info=~m/^([dl-][r-][w-][x-][r-][w-][x-][r-][w-][x-])\s+(\d+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\w{3}\s+\d+\s+[0-9:]+)\s+(.*)/) {
             my ($perm, $linkcount, $owner, $group, $size, $date, $file)=($1, $2, $3, $4, $5, $6, $7);
             if($perm=~m/^l/) { # is a link
