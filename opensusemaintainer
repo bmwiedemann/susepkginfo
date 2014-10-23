@@ -60,6 +60,7 @@ $pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
 
 if(!param) {
     print start_form(-name=>"form", -method=>"get"),
+        "you only need to fill in one of these:",br,
         textfield(-name=>'pkg', -class=>'text'), " srcpkg name",br,
         textfield(-name=>'binpkg', -class=>'text'), " binarypkg name",br,
         textfield(-name=>'filepath', -class=>'text'), " full filepath (e.g. /bin/bash)",br,
@@ -77,10 +78,11 @@ if($binpkg) {
 if($pkgname) {
     my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
     if((my $devel=$data->{devel}->[0])) {
-        print qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a><br/>\n!;
+        print "Source-Package: $pkgname",br,
+        qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a><br/>Package-Maintainers:<br/>\n!;
         $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
         printusers($data);
-        print "<hr/>";
+        print "<hr/> Project-Maintainers:".br;
         $data=suseapi("source", $devel->{project}, "_meta");
         printusers($data);
     } else { print "Bad package on Factory" }
