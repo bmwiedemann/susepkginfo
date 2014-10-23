@@ -53,19 +53,25 @@ sub selftest()
 
 # main
 
-print header("text/html");
-my $pkgname=$ENV{PATH_INFO}||param("pkg");
+print header("text/html"), start_html;
+my $pkgname=$ENV{PATH_INFO}; $pkgname=~s{^/}{}; param("pkg", $pkgname) if $pkgname;
+$pkgname=param("pkg");
 $pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
 
-my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
-
-if((my $devel=$data->{devel}->[0])) {
-	print qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a><br/>\n!;
-	$data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
-	printusers($data);
-	print "<hr/>";
-	$data=suseapi("source", $devel->{project}, "_meta");
-	printusers($data);
-} else { print "Bad package on Factory" }
+if(!param) {
+    print start_form(-name=>"form", -method=>"get"),
+        textfield(-name=>'pkg', -class=>'text'), " srcpkg name",br,
+        submit(),end_form,end_html;
+} else {
+    my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
+    if((my $devel=$data->{devel}->[0])) {
+        print qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a><br/>\n!;
+        $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
+        printusers($data);
+        print "<hr/>";
+        $data=suseapi("source", $devel->{project}, "_meta");
+        printusers($data);
+    } else { print "Bad package on Factory" }
+}
 
 selftest;
