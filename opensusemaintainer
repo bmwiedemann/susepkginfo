@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-use CGI;
+use CGI qw":form :cgi start_html end_html br"; # "head" would collide with LWP:Simple
 use XML::Simple;
 use LWP::Simple;
 # needs libcrypt-ssleay-perl for HTTPS
@@ -53,9 +53,8 @@ sub selftest()
 
 # main
 
-our $q=CGI->new;
-print $q->header("text/html");
-my $pkgname=$ENV{PATH_INFO}||$q->param("pkg");
+print header("text/html");
+my $pkgname=$ENV{PATH_INFO}||param("pkg");
 $pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
 
 my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
