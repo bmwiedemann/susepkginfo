@@ -59,19 +59,27 @@ $input1=param("pkg");
 #$input1=~s/[^a-zA-Z0-9._-]//g; # sanitize FIXME
 
 my %typeselect=(
+    "auto" => "autodetect",
     "srcpkg" => "source package name (e.g. Mesa)",
     "binpkg" => "binary package name (e.g. Mesa-32bit)",
     "fullpath" => "full path/filename (e.g. /bin/bash)",
     "command" => "command/executable (e.g. bash)");
 if(!param) {
     print start_form(-name=>"form", -method=>"get"),
-        popup_menu(-name=>'type',-values=>[sort keys %typeselect], -labels=>\%typeselect),br,
+        popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type",br,
         textfield(-name=>'pkg', -class=>'text'),br,
         submit(),end_form,end_html;
 }
 my %output;
-my $type=param('type') || "srcpkg";
-$output{$type}=$input1;
+my $type=param('type') || "auto";
+$type="fullpath" if $input1=~m{/};
+if($type ne "auto") {
+    $output{$type}=$input1;
+} else {
+    for my $t ("srcpkg", "binpkg", "command") {
+        $output{$t}=$input1;
+    }
+}
 if($output{"command"}) {
     foreach my $path (qw"/bin /sbin /usr/bin /usr/sbin") {
         my $p=lookupdbm("filepkg", $path."/".$output{"command"});
