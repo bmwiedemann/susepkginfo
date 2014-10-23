@@ -19,7 +19,7 @@ sub suseapi
 	return XMLin($xml, ForceArray => 1);
 }
 
-our %seen;
+our %seen=();
 sub printusers($)
 { my $data=shift;
 	my $ps;
