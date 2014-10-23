@@ -12,8 +12,8 @@ sub usage()
 if(@ARGV) {usage}
 
 my %data;
-my (%filepkgmap, %dbfilepkgmap);
-my (%pkgsrcmap, %dbpkgsrcmap);
+my %filepkgmap;
+my %pkgsrcmap;
 
 while(<>) {
         next unless m{\./(.*)\.rpm:    (.*)};
@@ -38,16 +38,19 @@ while(<>) {
 }
 
 print "writing out data...\n";
-###
-my $filepkgmapfile='/dev/shm/filepkg.new.dbm';
-unlink $filepkgmapfile;
-tie %dbfilepkgmap, "DB_File", $filepkgmapfile, O_RDWR|O_CREAT, 0666;
-%dbfilepkgmap=%filepkgmap;
-untie %dbfilepkgmap;
-###
-my $pkgsrcmapfile='/dev/shm/pkgsrc.new.dbm';
-unlink $pkgsrcmapfile;
-tie %dbpkgsrcmap, "DB_File", $pkgsrcmapfile, O_RDWR|O_CREAT, 0666;
-%dbpkgsrcmap=%pkgsrcmap;
-untie %dbpkgsrcmap;
+sub writehash($$)
+{
+        my ($filename, $hash) = @_;
+        unlink $filename;
+        my %dbmap;
+        tie %dbmap, "DB_File", $filename, O_RDWR|O_CREAT, 0666;
+        %dbmap=%$hash;
+        untie %dbmap;
+}
+
+my $tmpdir='/dev/shm/parsearchives';
+mkdir $tmpdir;
+chmod 0755, $tmpdir or die "could not mkdir/chmod $tmpdir";
+writehash("$tmpdir/filepkg.dbm", \%filepkgmap);
+writehash("$tmpdir/pkgsrc.dbm", \%pkgsrcmap);
 
