@@ -8,6 +8,9 @@ use DB_File;
 use Fcntl;
 
 
+my $factory="openSUSE:Factory";
+
+
 sub suseapi
 {
     my $urlbase='https://api.opensuse.org/public';
@@ -55,7 +58,7 @@ sub selftest()
 
 # main
 
-print header("text/html"), start_html(-title=>"openSUSE Factory maintainer finder tool");
+print header("text/html"), start_html(-title=>"$factory maintainer finder tool");
 my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1;
 $input1=param("pkg");
 #$input1=~s/[^a-zA-Z0-9._-]//g; # sanitize FIXME
@@ -68,7 +71,7 @@ my %typeselect=(
     "command" => "command/executable (e.g. bash)");
 if(!param) {
     print start_form(-name=>"form", -method=>"get"),
-        "This tool allows you to find details about openSUSE-Factory packages",br,
+        "This tool allows you to find details about $factory packages",br,
         popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type",br,
         textfield(-name=>'pkg', -class=>'text'),br,
         submit(),end_form,
@@ -105,8 +108,14 @@ if($output{binpkg}) {
     print "binary package not found".br unless $p || $type eq "auto";
 }
 if(my $pkgname=$output{srcpkg}) {
-    my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
+    my $data=suseapi("source", $factory, $pkgname, "_meta");
     if((my $devel=$data->{devel}->[0])) {
+        if($devel->{project} eq $factory) {
+            # follow links within Factory e.g. python-base and kernel-*
+            $data=suseapi("source", $factory, $devel->{package}, "_meta");
+            $devel=$data->{devel}->[0];
+            die "strange error 67: factory has bad link" if(!$devel);
+        }
         print "Source-Package: $pkgname",br,
             qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a>!,br,
             "Package-Maintainers:\n";
@@ -115,7 +124,7 @@ if(my $pkgname=$output{srcpkg}) {
         print hr,"Project-Maintainers:";
         $data=suseapi("source", $devel->{project}, "_meta");
         printusers($data);
-    } else { print "Bad package on Factory" }
+    } else { print "Bad package on $factory" }
 }
 selftest;
 print end_html;
