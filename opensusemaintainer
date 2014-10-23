@@ -61,8 +61,20 @@ $pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
 if(!param) {
     print start_form(-name=>"form", -method=>"get"),
         textfield(-name=>'pkg', -class=>'text'), " srcpkg name",br,
+        textfield(-name=>'binpkg', -class=>'text'), " binarypkg name",br,
+        textfield(-name=>'filepath', -class=>'text'), " full filepath (e.g. /bin/bash)",br,
         submit(),end_form,end_html;
-} else {
+}
+my $binpkg=param('binpkg');
+if(my $filepath=param('filepath')) {
+    my $p=lookupdbm("filepkg", $filepath);
+    $binpkg=$p if $p;
+}
+if($binpkg) {
+    my $p=lookupdbm("pkgsrc", $binpkg);
+    $pkgname=$p if $p;
+}
+if($pkgname) {
     my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
     if((my $devel=$data->{devel}->[0])) {
         print qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a><br/>\n!;
