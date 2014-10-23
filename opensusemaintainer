@@ -10,45 +10,45 @@ use Fcntl;
 
 sub suseapi
 {
-	my $urlbase='https://api.opensuse.org/public';
-	my $url=$urlbase."/".join("/", @_);
-	my $xml=get($url);
-	return unless $xml;
-	return XMLin($xml, ForceArray => 1);
+    my $urlbase='https://api.opensuse.org/public';
+    my $url=$urlbase."/".join("/", @_);
+    my $xml=get($url);
+    return unless $xml;
+    return XMLin($xml, ForceArray => 1);
 }
 
 sub lookupdbm($$)
 {
-        my ($db,$key)=@_;
-        my %dbmap;
-        my $result;
-        tie %dbmap, "DB_File", "/home/aw/html/db.suse/$db.dbm", O_RDONLY;
-        $result=$dbmap{$key};
-        untie %dbmap;
-        return $result;
+    my ($db,$key)=@_;
+    my %dbmap;
+    my $result;
+    tie %dbmap, "DB_File", "/home/aw/html/db.suse/$db.dbm", O_RDONLY;
+    $result=$dbmap{$key};
+    untie %dbmap;
+    return $result;
 }
 
 our %seen=();
 sub printusers($)
 { my $data=shift;
-	my $ps;
-	unless ($data && ($ps=$data->{person})) {
-		print "No persons associated with this package<br/>\n";
-		return;
-	} else {
-		foreach my $p (@$ps) {
-			my $user=$p->{userid};
-			if($user eq "--separatordummy--") { print "<hr/>"; next;}
-			next if $seen{$user.$p->{role}}++;
-			print qq{$p->{role}: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n<br/>};
-		}
-	}
+    my $ps;
+    unless ($data && ($ps=$data->{person})) {
+        print "No persons associated with this package<br/>\n";
+        return;
+    } else {
+        foreach my $p (@$ps) {
+            my $user=$p->{userid};
+            if($user eq "--separatordummy--") { print "<hr/>"; next;}
+            next if $seen{$user.$p->{role}}++;
+            print qq{$p->{role}: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n<br/>};
+        }
+    }
 }
 
 sub selftest()
 {
-        lookupdbm("filepkg", "/bin/bash") eq "bash" or die "filepkg selftest failed";
-        lookupdbm("pkgsrc", "Mesa-32bit") eq "Mesa" or die "pkgsrc selftest failed";
+    lookupdbm("filepkg", "/bin/bash") eq "bash" or die "filepkg selftest failed";
+    lookupdbm("pkgsrc", "Mesa-32bit") eq "Mesa" or die "pkgsrc selftest failed";
 }
 
 # main
