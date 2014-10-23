@@ -79,6 +79,7 @@ if($output{"command"}) {
     }
 }
 if($output{"fullpath"}) {
+    $output{"fullpath"}=~s!/$!!; # drop trailing slash
     my $p=lookupdbm("filepkg", $output{"fullpath"});
     $output{binpkg}=$p if $p;
 }
