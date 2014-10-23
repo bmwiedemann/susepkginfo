@@ -116,7 +116,9 @@ if(my $pkgname=$output{srcpkg}) {
             $devel=$data->{devel}->[0];
             die "strange error 67: factory has bad link" if(!$devel);
         }
-        print "Source-Package: $pkgname",br,
+        my @extrainfo;
+        if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
+        print @extrainfo,"Source-Package: $pkgname",br,
             qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a>!,br,
             "Package-Maintainers:\n";
         $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
