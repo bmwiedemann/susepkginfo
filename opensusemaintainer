@@ -54,28 +54,32 @@ sub selftest()
 # main
 
 print header("text/html"), start_html;
-my $pkgname=$ENV{PATH_INFO}; $pkgname=~s{^/}{}; param("pkg", $pkgname) if $pkgname;
-$pkgname=param("pkg");
-$pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
+my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1;
+$input1=param("pkg");
+#$input1=~s/[^a-zA-Z0-9._-]//g; # sanitize FIXME
 
+my %typeselect=(
+    "srcpkg" => "source package name (e.g. Mesa)",
+    "binpkg" => "binary package name (e.g. Mesa-32bit)",
+    "fullpath" => "full path/filename (e.g. /bin/bash)");
 if(!param) {
     print start_form(-name=>"form", -method=>"get"),
-        "you only need to fill in one of these:",br,
-        textfield(-name=>'pkg', -class=>'text'), " srcpkg name",br,
-        textfield(-name=>'binpkg', -class=>'text'), " binarypkg name",br,
-        textfield(-name=>'filepath', -class=>'text'), " full filepath (e.g. /bin/bash)",br,
+        popup_menu(-name=>'type',-values=>[sort keys %typeselect], -labels=>\%typeselect),br,
+        textfield(-name=>'pkg', -class=>'text'),br,
         submit(),end_form,end_html;
 }
-my $binpkg=param('binpkg');
-if(my $filepath=param('filepath')) {
-    my $p=lookupdbm("filepkg", $filepath);
-    $binpkg=$p if $p;
+my %output;
+my $type=param('type') || "srcpkg";
+$output{$type}=$input1;
+if($output{"fullpath"}) {
+    my $p=lookupdbm("filepkg", $output{"fullpath"});
+    $output{binpkg}=$p if $p;
 }
-if($binpkg) {
-    my $p=lookupdbm("pkgsrc", $binpkg);
-    $pkgname=$p if $p;
+if($output{binpkg}) {
+    my $p=lookupdbm("pkgsrc", $output{binpkg});
+    $output{srcpkg}=$p if $p;
 }
-if($pkgname) {
+if(my $pkgname=$output{srcpkg}) {
     my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
     if((my $devel=$data->{devel}->[0])) {
         print "Source-Package: $pkgname",br,
