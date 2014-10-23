@@ -1,0 +1,50 @@
+#!/usr/bin/perl -w
+use strict;
+use CGI;
+use XML::Simple;
+use LWP::Simple;
+# needs libcrypt-ssleay-perl for HTTPS
+
+our $q=CGI->new;
+print $q->header("text/html");
+my $pkgname=$ENV{PATH_INFO}||$q->param("pkg");
+$pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
+
+sub suseapi
+{
+	my $urlbase='https://api.opensuse.org/public';
+	my $url=$urlbase."/".join("/", @_);
+	my $xml=get($url);
+	return unless $xml;
+	return XMLin($xml, ForceArray => 1);
+}
+
+our %seen;
+sub printusers($)
+{ my $data=shift;
+	my $ps;
+	unless ($data && ($ps=$data->{person})) {
+		print "No persons associated with this package<br/>\n";
+		return;
+	} else {
+		foreach my $p (@$ps) {
+			my $user=$p->{userid};
+			if($user eq "--separatordummy--") { print "<hr/>"; next;}
+			next if $seen{$user.$p->{role}}++;
+			print qq{$p->{role}: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n<br/>};
+	      #print qq{$p->{role}: <a href="https://users.opensuse.org/show/$user">$user</a>\n<br/>};
+		}
+	}
+}
+
+my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
+
+if((my $devel=$data->{devel}->[0])) {
+	print qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a><br/>\n!;
+	$data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
+	printusers($data);
+	print "<hr/>";
+	$data=suseapi("source", $devel->{project}, "_meta");
+	printusers($data);
+} else { print "Bad package on Factory" }
+

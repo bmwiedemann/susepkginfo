@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
 use DB_File;
-use MLDBM qw(DB_File Storable);
 use Fcntl;
 
 sub usage()
@@ -12,7 +11,7 @@ sub usage()
 
 if(@ARGV) {usage}
 
-my (%data, %dbdata);
+my %data;
 my (%filepkgmap, %dbfilepkgmap);
 my (%pkgsrcmap, %dbpkgsrcmap);
 
@@ -51,8 +50,4 @@ unlink $pkgsrcmapfile;
 tie %dbpkgsrcmap, "DB_File", $pkgsrcmapfile, O_RDWR|O_CREAT, 0666;
 %dbpkgsrcmap=%pkgsrcmap;
 untie %dbpkgsrcmap;
-###
-my $dbm = tie %dbdata, 'MLDBM', "packages.mldbm", O_RDWR|O_CREAT, 0666;
-%dbdata=%data;
-untie %dbdata;
 
