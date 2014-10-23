@@ -14,6 +14,7 @@ if(@ARGV) {usage}
 my %data;
 my %filepkgmap;
 my %pkgsrcmap;
+my %binpath=qw(/bin 1 /sbin 1 /usr/bin 1 /usr/sbin 1);
 
 while(<>) {
     next unless m{\./(.*)\.rpm:    (.*)};
@@ -30,9 +31,15 @@ while(<>) {
         if($perm=~m/^l/) { # is a link
             $file=~s/ -> .*//; # strip link target
         }
-        $info="$file $perm $linkcount, $owner, $group, $size, $date";
         $filepkgmap{$file}=$pkgname;
+        if($perm=~/^-rwx/ && $file!~m{/usr/lib/debug} && 
+          $file=~m{(.*bin)/([^/]+)$} && !$binpath{$1}) {
+            my($p,$f)=($1,$2);
+            $filepkgmap{"/xbin/$f"}=$pkgname;
+            #print "found executable in $p / $f\n";
+        }
         #push(@{$data{$pkgname}{files}}, $file);
+        #$info="$file $perm $linkcount, $owner, $group, $size, $date";
     }
     #print "$arch $pkgname $pkgsrcmap{$pkgname} $info\n";
 }

@@ -91,7 +91,7 @@ if($type ne "auto") {
     }
 }
 if($output{"command"}) {
-    foreach my $path (qw"/bin /sbin /usr/bin /usr/sbin") {
+    foreach my $path (qw"/xbin /bin /sbin /usr/bin /usr/sbin") {
         my $p=lookupdbm("filepkg", $path."/".$output{"command"});
         $output{binpkg}=$p if $p;
     }
