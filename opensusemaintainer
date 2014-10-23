@@ -90,10 +90,12 @@ if($output{"fullpath"}) {
     $output{"fullpath"}=~s!/$!!; # drop trailing slash
     my $p=lookupdbm("filepkg", $output{"fullpath"});
     $output{binpkg}=$p if $p;
+    print "file not found".br unless $p;
 }
 if($output{binpkg}) {
     my $p=lookupdbm("pkgsrc", $output{binpkg});
     $output{srcpkg}=$p if $p;
+    print "binary package not found".br unless $p || $type eq "auto";
 }
 if(my $pkgname=$output{srcpkg}) {
     my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
