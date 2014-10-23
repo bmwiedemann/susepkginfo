@@ -71,7 +71,11 @@ if(!param) {
         "This tool allows you to find details about openSUSE-Factory packages",br,
         popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type",br,
         textfield(-name=>'pkg', -class=>'text'),br,
-        submit(),end_form;
+        submit(),end_form,
+        qq'<script language="javascript" type="text/javascript">
+          document.form.pkg.focus();
+          document.form.pkg.select();
+        </script>';
 }
 my %output;
 my $type=param('type') || "auto";
