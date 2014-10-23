@@ -4,11 +4,9 @@ use CGI;
 use XML::Simple;
 use LWP::Simple;
 # needs libcrypt-ssleay-perl for HTTPS
+use DB_File;
+use Fcntl;
 
-our $q=CGI->new;
-print $q->header("text/html");
-my $pkgname=$ENV{PATH_INFO}||$q->param("pkg");
-$pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
 
 sub suseapi
 {
@@ -17,6 +15,17 @@ sub suseapi
 	my $xml=get($url);
 	return unless $xml;
 	return XMLin($xml, ForceArray => 1);
+}
+
+sub lookupdbm($$)
+{
+        my ($db,$key)=@_;
+        my %dbmap;
+        my $result;
+        tie %dbmap, "DB_File", "/home/aw/html/db.suse/$db.dbm", O_RDONLY;
+        $result=$dbmap{$key};
+        untie %dbmap;
+        return $result;
 }
 
 our %seen=();
@@ -32,10 +41,22 @@ sub printusers($)
 			if($user eq "--separatordummy--") { print "<hr/>"; next;}
 			next if $seen{$user.$p->{role}}++;
 			print qq{$p->{role}: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n<br/>};
-	      #print qq{$p->{role}: <a href="https://users.opensuse.org/show/$user">$user</a>\n<br/>};
 		}
 	}
 }
+
+sub selftest()
+{
+        lookupdbm("filepkg", "/bin/bash") eq "bash" or die "filepkg selftest failed";
+        lookupdbm("pkgsrc", "Mesa-32bit") eq "Mesa" or die "pkgsrc selftest failed";
+}
+
+# main
+
+our $q=CGI->new;
+print $q->header("text/html");
+my $pkgname=$ENV{PATH_INFO}||$q->param("pkg");
+$pkgname=~s/[^a-zA-Z0-9._-]//g; # sanitize
 
 my $data=suseapi("source", "openSUSE:Factory", $pkgname, "_meta");
 
@@ -48,3 +69,4 @@ if((my $devel=$data->{devel}->[0])) {
 	printusers($data);
 } else { print "Bad package on Factory" }
 
+selftest;
