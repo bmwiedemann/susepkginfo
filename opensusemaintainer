@@ -129,4 +129,5 @@ if(my $pkgname=$output{srcpkg}) {
     } else { print "Bad package on $factory" }
 }
 selftest;
-print end_html;
+print hr,"To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a>",
+    end_html;
