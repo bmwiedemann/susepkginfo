@@ -118,8 +118,8 @@ if(my $pkgname=$output{srcpkg}) {
         }
         my @extrainfo;
         if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
-        print @extrainfo,"Source-Package: $pkgname",br,
-            qq!devel-project: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$devel->{project}</a>!,br,
+        print @extrainfo,qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a>!,br,
+            qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!,br,
             "Package-Maintainers:\n";
         $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
         printusers($data);
