@@ -69,7 +69,7 @@ my %typeselect=(
     "binpkg" => "binary package name (e.g. Mesa-32bit)",
     "fullpath" => "full path/filename (e.g. /bin/bash)",
     "command" => "command/executable (e.g. bash)");
-if(!param) {
+if(1) {
     print start_form(-name=>"form", -method=>"get"),
         "This tool allows you to find details about $factory packages",br,
         popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type",br,
@@ -78,8 +78,9 @@ if(!param) {
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
           document.form.pkg.select();
-        </script>';
-} else {
+        </script>'.hr;
+}
+if(param) {
     my %output;
     my $type=param('type') || "auto";
     $type="fullpath" if $input1=~m{/};
