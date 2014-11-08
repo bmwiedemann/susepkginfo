@@ -87,6 +87,7 @@ if(param) {
     if($type ne "auto") {
         $output{$type}=$input1;
     } else {
+        $input1=~s/\s//g; # drop spaces to better work with copy-pasted strings
         for my $t ("srcpkg", "binpkg", "command") {
             $output{$t}=$input1;
         }
