@@ -44,7 +44,9 @@ sub printusers($)
             my $user=$p->{userid};
             if($user eq "--separatordummy--") { print hr; next;}
             next if $seen{$user.$p->{role}}++;
-            print qq{<li>$p->{role}: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n</li>};
+            my $r=$p->{role};
+            if($r eq "bugowner") {$r=CGI::strong($r)}
+            print qq{<li>$r: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n</li>};
         }
         print "</ul>\n";
     }
