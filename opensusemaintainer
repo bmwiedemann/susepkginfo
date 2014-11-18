@@ -9,13 +9,20 @@ use Fcntl;
 
 
 my $factory="openSUSE:Factory";
+my $dbdir="/home/aw/html/db.suse";
 
-
-sub suseapi
+sub cachedget
 {
     my $urlbase='https://api.opensuse.org/public';
     my $url=$urlbase."/".join("/", @_);
-    my $xml=get($url);
+    my $xmldata;
+    $xmldata=get($url);
+    return $xmldata;
+}
+
+sub suseapi
+{
+    my $xml=cachedget(@_);
     return unless $xml;
     return XMLin($xml, ForceArray => 1);
 }
@@ -25,7 +32,7 @@ sub lookupdbm($$)
     my ($db,$key)=@_;
     my %dbmap;
     my $result;
-    tie %dbmap, "DB_File", "/home/aw/html/db.suse/$db.dbm", O_RDONLY;
+    tie %dbmap, "DB_File", "$dbdir/$db.dbm", O_RDONLY;
     $result=$dbmap{$key};
     untie %dbmap;
     return $result;
