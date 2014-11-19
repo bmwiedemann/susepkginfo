@@ -10,13 +10,35 @@ use Fcntl;
 
 my $factory="openSUSE:Factory";
 my $dbdir="/home/aw/html/db.suse";
+my $cachedir="$dbdir/xml/";
+my $expiry=7*24*60*60;
+
+sub isfresh($)
+{
+    my $cachefile=shift;
+    my $mtime=(stat($cachefile))[9];
+    return 0 unless $mtime;
+    return($mtime>time-$expiry);
+}
 
 sub cachedget
 {
     my $urlbase='https://api.opensuse.org/public';
+    my $cachefile=$cachedir.join(',', @_);
     my $url=$urlbase."/".join("/", @_);
     my $xmldata;
-    $xmldata=get($url);
+    if(isfresh($cachefile)) {
+        open(my $f, "<", $cachefile) or die "could not read cachefile: $!";
+        local $/;
+        $xmldata=<$f>;
+        close $f;
+    } else {
+        $xmldata=get($url);
+        return unless $xmldata;
+        open(my $f, ">", $cachefile) or warn "could not write cachefile: $!";
+        print $f $xmldata;
+        close $f;
+    }
     return $xmldata;
 }
 
