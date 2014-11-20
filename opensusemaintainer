@@ -17,8 +17,10 @@ sub isfresh($)
 {
     my $cachefile=shift;
     my $mtime=(stat($cachefile))[9];
+    my $factor=1;
+    $factor=3 if($cachefile=~m/source,openSUSE:Factory,.*,_meta/);
     return 0 unless $mtime;
-    return($mtime>time-$expiry);
+    return($mtime>time-$expiry*$factor);
 }
 
 sub cachedget
