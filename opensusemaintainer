@@ -162,7 +162,7 @@ if(param) {
             print hr,"Project-Maintainers:";
             $data=suseapi("source", $devel->{project}, "_meta");
             printusers($data);
-        } else { print "Bad package on $factory" }
+        } else { print "Bad package on $factory &#8658; <a href=\"http://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
     }
 }
 selftest;
