@@ -6,12 +6,14 @@ use LWP::Simple;
 # needs libcrypt-ssleay-perl for HTTPS
 use DB_File;
 use Fcntl;
+use Time::HiRes qw"gettimeofday tv_interval";
 
 
-my $factory="openSUSE:Factory";
-my $dbdir="/home/aw/html/db.suse";
-my $cachedir="$dbdir/xml/";
-my $expiry=7*24*60*60;
+our $debug=1;
+our $factory="openSUSE:Factory";
+our $dbdir="/home/aw/html/db.suse";
+our $cachedir="$dbdir/xml/";
+our $expiry=31*24*60*60;
 
 sub isfresh($)
 {
@@ -35,7 +37,9 @@ sub cachedget
         $xmldata=<$f>;
         close $f;
     } else {
+        my $t=[gettimeofday];
         $xmldata=get($url);
+        print "<span style='color:#7b7'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
         return unless $xmldata;
         open(my $f, ">", $cachefile) or warn "could not write cachefile: $!";
         print $f $xmldata;
