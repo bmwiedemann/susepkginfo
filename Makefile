@@ -7,8 +7,8 @@ db/pkgsrc.dbm: /mounts/dist/full/full-head-x86_64/ARCHIVES.gz
 
 sync: update copy
 copy:
-	rsync -azSP db/ vm11d.zq1.de:/home/aw/html/db.suse/
-	rsync -a opensusemaintainer vm11d.zq1.de:/home/aw/inc/cgi-bin/public/
+	rsync -azSP db/ vm11.zq1.de:/home/aw/html/db.suse/
+	rsync -a opensusemaintainer vm11.zq1.de:/home/aw/inc/cgi-bin/public/
 
 clean:
 	rm -f db/*
