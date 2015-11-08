@@ -87,6 +87,13 @@ sub printusers($)
     }
 }
 
+sub lookupfilepkg($)
+{
+    my $in=shift;
+    my $p=lookupdbm("filepkg", $in);
+    return split("\000", $p||"");
+}
+
 sub selftest()
 {
     lookupdbm("filepkg", "/bin/bash") eq "bash" or die "filepkg selftest failed";
@@ -150,15 +157,18 @@ if(param) {
     }
     if($output{"command"}) {
         foreach my $path (qw"/xbin /bin /sbin /usr/bin /usr/sbin") {
-            my $p=lookupdbm("filepkg", $path."/".$output{"command"});
-            $output{binpkg}=$p if $p;
+            my @a=lookupfilepkg($path."/".$output{"command"});
+            $output{binpkg}=$a[0] if @a;
         }
     }
     if($output{"fullpath"}) {
         $output{"fullpath"}=~s!/$!!; # drop trailing slash
-        my $p=lookupdbm("filepkg", $output{"fullpath"});
-        $output{binpkg}=$p if $p;
-        print "file not found".br unless $p;
+        my @a=lookupfilepkg($output{"fullpath"});
+        if(@a) {
+            $output{binpkg}=$a[0];
+        } else {
+            print "file not found".br;
+        }
     }
     if($output{binpkg}) {
         my $p=lookupdbm("pkgsrc", $output{binpkg});

@@ -31,7 +31,7 @@ while(<>) {
         if($perm=~m/^l/) { # is a link
             $file=~s/ -> .*//; # strip link target
         }
-        $filepkgmap{$file}=$pkgname;
+        push(@{$filepkgmap{$file}}, $pkgname);
         if($perm=~/^-rwx/ && $file!~m{/usr/lib/debug} && 
           $file=~m{(.*bin)/([^/]+)$} && !$binpath{$1}) {
             my($p,$f)=($1,$2);
@@ -48,6 +48,10 @@ print "writing out data...\n";
 sub writehash($$)
 {
     my ($filename, $hash) = @_;
+    foreach my $k (sort keys(%$hash)) {
+        next unless ref($hash->{$k});
+        $hash->{$k}=join("\000", @{$hash->{$k}}); # convert arrayref into string
+    }
     unlink $filename;
     my %dbmap;
     tie %dbmap, "DB_File", $filename, O_RDWR|O_CREAT, 0666;
