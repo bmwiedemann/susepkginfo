@@ -74,7 +74,7 @@ sub printusers($)
         print "No persons associated with this package<br/>\n";
         return;
     } else {
-        print "<ul>";
+        print "<div style='background-color:#dfd'><ul>";
         foreach my $p (@$ps) {
             my $user=$p->{userid};
             if($user eq "--separatordummy--") { print hr; next;}
@@ -83,7 +83,7 @@ sub printusers($)
             if($r eq "bugowner") {$r=CGI::strong($r)}
             print qq{<li>$r: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n</li>};
         }
-        print "</ul>\n";
+        print "</ul></div>\n";
     }
 }
 
@@ -92,11 +92,11 @@ sub entrylist($@)
     my $type=shift;
     my @a=@_;
     if(@a>1) {
-       print "found more than one package that provides this: <ol>";
+       print "<div style='background-color:#ffb'>found more than one package that provides this: <ol>";
        foreach(@a) {
            print li(a({href=>"?pkg=$_&type=$type"},$_));
        }
-       print "</ol>";
+       print "</ol></div>";
     }
 }
 
