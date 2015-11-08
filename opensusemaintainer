@@ -144,6 +144,7 @@ if(param) {
             }
         } else {
             print "provides not found" unless $type eq "auto";
+            $output{"provides"}="";
         }
     }
     if($output{"command"}) {
@@ -173,6 +174,7 @@ if(param) {
                 die "strange error 67: factory has bad link" if(!$devel);
             }
             my @extrainfo;
+            if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
             print @extrainfo,qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a>
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$devel->{package}.changes?expand=1">changes</a>!,br,
