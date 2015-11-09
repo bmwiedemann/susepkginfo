@@ -164,9 +164,11 @@ if(param) {
     }
     if($output{"command"}) {
         foreach my $path (qw"/xbin /bin /sbin /usr/bin /usr/sbin") {
-            my @a=lookupfilepkg($path."/".$output{"command"});
-            $output{binpkg}=$a[0] if @a;
-            entrylist("binpkg", @a);
+            my $fp=$path."/".$output{"command"};
+            my @a=lookupfilepkg($fp);
+            if(@a) {
+                $output{"fullpath"}=$fp;
+            }
         }
     }
     if($output{"fullpath"}) {
@@ -194,6 +196,7 @@ if(param) {
                 die "strange error 67: factory has bad link" if(!$devel);
             }
             my @extrainfo;
+            if($output{fullpath}) {push @extrainfo, "Path: $output{fullpath}".br}
             if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
             print @extrainfo,qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a>
