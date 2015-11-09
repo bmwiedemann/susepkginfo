@@ -74,7 +74,7 @@ sub printusers($)
         print "No persons associated with this package<br/>\n";
         return;
     } else {
-        print "<div style='background-color:#dfd'><ul>";
+        print "<div class='userlist'><ul>";
         foreach my $p (@$ps) {
             my $user=$p->{userid};
             if($user eq "--separatordummy--") { print hr; next;}
@@ -92,7 +92,7 @@ sub entrylist($@)
     my $type=shift;
     my @a=@_;
     if(@a>1) {
-       print "<div style='background-color:#ffb'>found more than one package that provides this: <ol>";
+       print "<div class='warning'>found more than one package that provides this: <ol>";
        foreach(@a) {
            print li(a({href=>"?pkg=$_&type=$type"},$_));
        }
@@ -116,7 +116,13 @@ sub selftest()
 
 # main
 
-print header("text/html"), start_html(-title=>"$factory maintainer finder tool");
+print header("text/html"), start_html(-title=>"$factory maintainer finder tool",
+-head=>qq{<style type="text/css">
+body { background-color:#f8f8f8; }
+.userlist {background-color:#dfd}
+.warning {background-color:#ffb}
+ </style>}
+);
 my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1 and not param("pkg");
 $input1=param("pkg");
 #$input1=~s/[^a-zA-Z0-9._-]//g; # sanitize FIXME
