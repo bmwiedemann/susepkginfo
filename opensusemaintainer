@@ -52,7 +52,7 @@ sub suseapi
 {
     my $xml=cachedget(@_);
     return unless $xml;
-    return XMLin($xml, ForceArray => 1);
+    return eval{XMLin($xml, ForceArray => 1)}||undef;
 }
 
 sub lookupdbm($$)
