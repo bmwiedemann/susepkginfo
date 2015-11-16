@@ -140,7 +140,8 @@ my %typeselect=(
     "command" => "command/executable (e.g. bash)");
 if(1) {
     print start_form(-name=>"form", -method=>"get"),
-        "<p>This tool allows you to find details about $factory packages</p><p>",
+        "<p>This tool allows you to find details about $factory packages
+        <br><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p>",
         popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type</p><p>",
         textfield(-name=>'pkg', -class=>'text', -accesskey=>"c"),"</p>",
         submit(),end_form,
