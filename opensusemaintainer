@@ -118,7 +118,11 @@ sub selftest()
 
 print header("text/html"), start_html(-title=>"$factory maintainer finder tool",
 -head=>qq{<style type="text/css">
-body { background-color:#f8f8f8; }
+body {
+    background-color:#f8f8f8;
+    margin: 1em;
+    line-height: 1.4;
+}
 .userlist {background-color:#dfd}
 .warning {background-color:#ffb}
  </style>}
@@ -136,9 +140,9 @@ my %typeselect=(
     "command" => "command/executable (e.g. bash)");
 if(1) {
     print start_form(-name=>"form", -method=>"get"),
-        "This tool allows you to find details about $factory packages",br,
-        popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type",br,
-        textfield(-name=>'pkg', -class=>'text', -accesskey=>"c"),br,
+        "<p>This tool allows you to find details about $factory packages</p><p>",
+        popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type</p><p>",
+        textfield(-name=>'pkg', -class=>'text', -accesskey=>"c"),"</p>",
         submit(),end_form,
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
