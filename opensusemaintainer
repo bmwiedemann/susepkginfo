@@ -132,7 +132,7 @@ $input1=param("pkg");
 #$input1=~s/[^a-zA-Z0-9._-]//g; # sanitize FIXME
 
 my %typeselect=(
-    "auto" => "autodetect",
+    "auto" => "anywhere",
     "srcpkg" => "source package name (e.g. Mesa)",
     "binpkg" => "binary package name (e.g. Mesa-32bit)",
     "provides" => "a package's provides (e.g. Mesa(x86-64))",
@@ -142,9 +142,9 @@ if(1) {
     print start_form(-name=>"form", -method=>"get"),
         "<p>This tool allows you to find details about $factory packages
         <br><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p>",
-        popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," input type</p><p>",
-        textfield(-name=>'pkg', -class=>'text', -accesskey=>"c"),"</p>",
-        submit(),end_form,
+        textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c"),"</p>",
+        "in ".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect),"</p><p>",
+        submit(-label=>"Search"),end_form,
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
           document.form.pkg.select();
