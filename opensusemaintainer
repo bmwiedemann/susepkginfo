@@ -117,6 +117,7 @@ sub selftest()
 # main
 
 print header("text/html"), start_html(-title=>"$factory maintainer finder tool",
+#-style=>"//aw.zq1.de/code/css/pure-min.css",
 -head=>[qq{<style type="text/css">
 body {
     background-color:#f8f8f8;
@@ -141,16 +142,16 @@ my %typeselect=(
     "fullpath" => "full path/filename (e.g. /bin/bash)",
     "command" => "command/executable (e.g. bash)");
 if(1) {
-    print start_form(-name=>"form", -method=>"get"),
+    print start_form(-name=>"form", -method=>"get", -class=>"pure-form"),
         "<p>This tool allows you to find details about $factory packages
-        <br><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p>",
+        <br><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>",
         textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c"),"</p>",
         "in ".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect),"</p><p>",
-        submit(-label=>"Search"),end_form,
+        submit(-label=>"Search"),"</fieldset>", end_form,
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
           document.form.pkg.select();
-        </script>'.hr;
+        </script>'.br;
 }
 if(param) {
     my %output;
