@@ -127,7 +127,7 @@ body {
 .userlist {background-color:#dfd}
 .warning {background-color:#ffb}
  </style>},
-  qq{<meta name="viewport" content="width=400px, initial-scale=1">}
+  qq{<meta name="viewport" content="width=400px, initial-scale=1" />}
 ]
 );
 my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1 and not param("pkg");
@@ -144,10 +144,10 @@ my %typeselect=(
 if(1) {
     print start_form(-name=>"form", -method=>"get", -class=>"pure-form"),
         "<p>This tool allows you to find details about $factory packages
-        <br><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>",
+        <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>",
         textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c"),
         " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," ",
-        submit(-label=>"Search"),"</fieldset>", end_form,
+        submit(-label=>"Search"),"</fieldset></p>", end_form,
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
           document.form.pkg.select();
