@@ -145,13 +145,52 @@ if(1) {
     print start_form(-name=>"form", -method=>"get", -class=>"pure-form"),
         "<p>This tool allows you to find details about $factory packages
         <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>",
-        textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c"),
+        textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()"),
         " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," ",
         submit(-label=>"Search"),"</fieldset></p>", end_form,
+        '<div id="replace"></div>',
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
-          document.form.pkg.select();
-        </script>'.br;
+          document.form.pkg.select();'.
+qq{
+URLs = [
+    "http://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
+    "https://packages.debian.org/search?keywords=ARG", "Debian",
+    "https://admin.fedoraproject.org/pkgdb/packages/ARG*/", "Fedora",
+    "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
+    "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
+    "https://pmbs.links2linux.de/search?search_text=ARG", "Packman",
+    "https://build.opensuse.org/search?search_text=ARG", "OBS",
+    "https://software.opensuse.org/search?q=ARG", "openSUSE"
+];
+function mysearch(val) {
+     var x=document.getElementById("replace");
+     if(val.indexOf("/") > -1) {x.innerHTML=""; return;} // be smart and dont search for pathnames
+     HTML="You can also search for <strong>"+val+"</strong> in ";
+     for (var i = URLs.length-1; i>=0; i-=2) {
+         HTML+="<a href='"+URLs[i-1].replace("ARG",val)+"'>"+URLs[i]+"</a> ";
+     }
+     if(val == '') {HTML='';}
+     x.innerHTML=HTML;
+}
+function formsearch() {
+     var val=document.getElementById("searchtext").value;
+     window.location.href = "#"+val;
+     mysearch(val);
+}
+
+window.onload = function () {
+    var h=window.location.hash;
+    if(h.length>1) {
+        var v=h.replace("#","");
+        document.getElementById("searchtext").value=v;
+        mysearch(v);
+    } else {
+      formsearch();
+    }
+};
+        </script>}.br.
+        "";
 }
 if(param) {
     my %output;
