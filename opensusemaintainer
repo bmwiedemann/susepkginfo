@@ -14,6 +14,7 @@ our $factory="openSUSE:Factory";
 our $dbdir="/home/aw/html/db.suse";
 our $cachedir="$dbdir/xml/";
 our $expiry=31*24*60*60;
+our $html;
 
 sub isfresh($)
 {
@@ -39,7 +40,7 @@ sub cachedget
     } else {
         my $t=[gettimeofday];
         $xmldata=get($url);
-        print "<span style='color:#7b7'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
+        $html .= "<span style='color:#7b7'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
         return unless $xmldata;
         open(my $f, ">", "$cachefile.new") or warn "could not write cachefile: $!";
         print $f $xmldata;
@@ -72,19 +73,19 @@ sub printusers($)
 { my $data=shift;
     my $ps;
     unless ($data && ($ps=$data->{person})) {
-        print "No persons associated with this package<br/>\n";
+        $html .= "No persons associated with this package<br/>\n";
         return;
     } else {
-        print "<div class='userlist'><ul>";
+        $html .= "<div class='userlist'><ul>";
         foreach my $p (@$ps) {
             my $user=$p->{userid};
-            if($user eq "--separatordummy--") { print hr; next;}
+            if($user eq "--separatordummy--") { $html .= hr; next;}
             next if $seen{$user.$p->{role}}++;
             my $r=$p->{role};
             if($r eq "bugowner") {$r=CGI::strong($r)}
-            print qq{<li>$r: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n</li>};
+            $html .= qq{<li>$r: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n</li>};
         }
-        print "</ul></div>\n";
+        $html .= "</ul></div>\n";
     }
 }
 
@@ -93,11 +94,11 @@ sub entrylist($@)
     my $type=shift;
     my @a=@_;
     if(@a>1) {
-       print "<div class='warning'>found more than one package that provides this: <ol>";
+       $html .= "<div class='warning'>found more than one package that provides this: <ol>";
        foreach(@a) {
-           print li(a({href=>"?pkg=$_&type=$type"},$_));
+           $html .= li(a({href=>"?pkg=$_&type=$type"},$_));
        }
-       print "</ol></div>";
+       $html .= "</ol></div>";
     }
 }
 
@@ -117,7 +118,7 @@ sub selftest()
 
 # main
 
-print header("text/html"), start_html(-title=>"$factory maintainer finder tool",
+$html = header("text/html"). start_html(-title=>"$factory maintainer finder tool",
 #-style=>"//aw.zq1.de/code/css/pure-min.css",
 -head=>[qq{<style type="text/css">
 body {
@@ -144,13 +145,13 @@ my %typeselect=(
     "fullpath" => "full path/filename (e.g. /bin/bash)",
     "command" => "command/executable (e.g. bash)");
 if(1) {
-    print start_form(-name=>"form", -method=>"get", -class=>"pure-form"),
+    $html .= start_form(-name=>"form", -method=>"get", -class=>"pure-form").
         "<p>This tool allows you to find details about $factory packages
-        <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>",
-        textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()"),
-        " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)," ",
-        submit(-label=>"Search"),"</fieldset></p>", end_form,
-        '<div id="replace"></div>',
+        <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>".
+        textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()").
+        " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)." ".
+        submit(-label=>"Search")."</fieldset></p>". end_form.
+        '<div id="replace"></div>'.
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
           document.form.pkg.select();'.
@@ -223,7 +224,7 @@ if(param) {
             $output{binpkg}=$a[0];
             entrylist("binpkg", @a);
         } else {
-            print "provides not found" unless $type eq "auto";
+            $html .= "provides not found" unless $type eq "auto";
             $output{"provides"}="";
         }
     }
@@ -243,13 +244,13 @@ if(param) {
             $output{binpkg}=$a[0];
             entrylist("binpkg", @a);
         } else {
-            print "file not found".br;
+            $html .= "file not found".br;
         }
     }
     if($output{binpkg}) {
         my $p=lookupdbm("pkgsrc", $output{binpkg});
         $output{srcpkg}=$p if $p;
-        print "binary package not found".br unless $p || $type eq "auto";
+        $html .= "binary package not found".br unless $p || $type eq "auto";
     }
     if(my $pkgname=$output{srcpkg} and lookupdbm("src", $output{srcpkg})) {
         my $data=suseapi("source", $factory, $pkgname, "_meta");
@@ -264,18 +265,19 @@ if(param) {
             if($output{fullpath}) {push @extrainfo, "Path: $output{fullpath}".br}
             if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
-            print @extrainfo,qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a>
-                <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$devel->{package}.changes?expand=1">changes</a>!,br,
-                qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!,br,
+            $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a>
+                <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$devel->{package}.changes?expand=1">changes</a>!.br.
+                qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "Package-Maintainers:\n";
             $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
             printusers($data);
-            print hr,"Project-Maintainers:";
+            $html .= hr."Project-Maintainers:";
             $data=suseapi("source", $devel->{project}, "_meta");
             printusers($data);
-        } else { print "Bad package on $factory &#8658; <a href=\"http://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
+        } else { $html .= "Bad package on $factory &#8658; <a href=\"http://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
     }
 }
 selftest;
-print hr,"To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a>",
+$html .= hr."To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a>".
     end_html;
+print $html;
