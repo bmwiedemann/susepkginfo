@@ -179,14 +179,16 @@ function do_formsearch(val) {
      window.location.href = "#"+val;
      mysearch(val);
 }
+seen={};
 function formsearch() {
      var val=document.getElementById("searchtext").value;
      do_formsearch(val);
      // trigger async cache fetch
+     if(seen[val]) return;
      Ab("//"+window.location.host+window.location.pathname+"?ajax=1&pkg="+val, function(c,s) {
              return; // ignore result
          }, 0);
-
+     seen[val]=1;
 }
 
 window.onload = function () {
