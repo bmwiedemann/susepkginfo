@@ -14,6 +14,7 @@ if(@ARGV) {usage}
 my %data;
 my %filepkgmap;
 my %pkgsrcmap;
+my %srcmap;
 my %binpath=qw(/bin 1 /sbin 1 /usr/bin 1 /usr/sbin 1);
 
 while(<>) {
@@ -24,6 +25,7 @@ while(<>) {
     if ($info=~m/^Version\s*: (\S+)/) {$data{$pkgname}{version}=$1}
     if ($info=~m/^Release\s*: (\S+)/) {$data{$pkgname}{release}=$1}
     if ($info=~m/^Source RPM\s*: (\S+)-[^-]+-[^-]+\.\w+\.rpm$/) {
+        $srcmap{$1}=1;
         $pkgsrcmap{$pkgname}=$1;
         $data{$pkgname}{srcpkg}=$1;
     } elsif ($info=~m/^([dl-][r-][w-][x-][r-][w-][x-][r-][w-][x-])\s+(\d+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\w{3}\s+\d+\s+[0-9:]+)\s+(.*)/) {
@@ -64,4 +66,5 @@ mkdir $tmpdir;
 chmod 0755, $tmpdir or die "could not mkdir/chmod $tmpdir";
 writehash("$tmpdir/filepkg.dbm", \%filepkgmap);
 writehash("$tmpdir/pkgsrc.dbm", \%pkgsrcmap);
+writehash("$tmpdir/src.dbm", \%srcmap);
 
