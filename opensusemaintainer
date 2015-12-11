@@ -127,6 +127,7 @@ body {
 .userlist {background-color:#dfd}
 .warning {background-color:#ffb}
  </style>},
+  qq{<script type="text/javascript" src="//aw.zq1.de/code/js/bmwajax.js"></script>},
   qq{<meta name="viewport" content="width=400px, initial-scale=1" />}
 ]
 );
@@ -173,10 +174,18 @@ function mysearch(val) {
      if(val == '') {HTML='';}
      x.innerHTML=HTML;
 }
-function formsearch() {
-     var val=document.getElementById("searchtext").value;
+function do_formsearch(val) {
      window.location.href = "#"+val;
      mysearch(val);
+}
+function formsearch() {
+     var val=document.getElementById("searchtext").value;
+     do_formsearch(val);
+     // trigger async cache fetch
+     Ab("//"+window.location.host+window.location.pathname+"?ajax=1&pkg="+val, function(c,s) {
+             return; // ignore result
+         }, 0);
+
 }
 
 window.onload = function () {
@@ -186,7 +195,7 @@ window.onload = function () {
         document.getElementById("searchtext").value=v;
         mysearch(v);
     } else {
-      formsearch();
+      do_formsearch(document.getElementById("searchtext").value);
     }
 };
         </script>}.br.
