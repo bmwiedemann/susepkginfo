@@ -280,4 +280,8 @@ if(param) {
 selftest;
 $html .= hr."To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a>".
     end_html;
-print $html;
+if(!param("ajax")) {
+    print $html;
+} else {
+    print header("text/plain");
+}
