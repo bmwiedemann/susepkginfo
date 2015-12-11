@@ -41,9 +41,10 @@ sub cachedget
         $xmldata=get($url);
         print "<span style='color:#7b7'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
         return unless $xmldata;
-        open(my $f, ">", $cachefile) or warn "could not write cachefile: $!";
+        open(my $f, ">", "$cachefile.new") or warn "could not write cachefile: $!";
         print $f $xmldata;
         close $f;
+        rename("$cachefile.new", "$cachefile") or warn "could not rename cachefile";
     }
     return $xmldata;
 }
