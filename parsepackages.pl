@@ -13,10 +13,18 @@ if(@ARGV) {usage}
 
 my %data;
 my %providesmap;
+my %srcmap;
 
 while(<>) {
     chomp;
-    if (m/^=(...): (\S+)/) {$data{lc($1)}=$2; $data{section}="";}
+    if (m/^=(...): (\S+)/) {
+        $data{lc($1)}=$2;
+        $data{section}="";
+        if($1 eq "Src") {
+            my @a=split(" ", $');
+            $srcmap{$data{src}} = $a[0];
+        }
+    }
     elsif (m/^\+([A-Z][a-z][a-z]):$/) {$data{section}=$1}
     elsif ($data{pkg} && $data{section} eq "Prv") {
         my $name=$_;
@@ -30,6 +38,7 @@ sub writehash($$)
 {
     my ($filename, $hash) = @_;
     foreach my $k (sort keys(%$hash)) {
+        next unless ref($hash->{$k});
         $hash->{$k}=join(":", @{$hash->{$k}}); # convert arrayref into string
     }
     unlink $filename;
@@ -43,4 +52,5 @@ my $tmpdir='/dev/shm/parsearchives';
 mkdir $tmpdir;
 chmod 0755, $tmpdir or die "could not mkdir/chmod $tmpdir";
 writehash("$tmpdir/provides.dbm", \%providesmap);
+writehash("$tmpdir/src.dbm", \%srcmap);
 
