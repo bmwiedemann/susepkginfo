@@ -34,4 +34,4 @@ while(<>) {
 
 dblib::init();
 dblib::writehash("provides.dbm", \%providesmap);
-dblib::writehash("src.dbm", \%srcmap);
+dblib::writehash("opensusesrc.dbm", \%srcmap);

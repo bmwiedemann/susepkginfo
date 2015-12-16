@@ -253,7 +253,7 @@ if(param) {
         $output{srcpkg}=$p if $p;
         $html .= "binary package not found".br unless $p || $type eq "auto";
     }
-    if(my $pkgname=$output{srcpkg} and my $srcver=lookupdbm("src", $output{srcpkg})) {
+    if(my $pkgname=$output{srcpkg} and my $srcver=lookupdbm("opensusesrc", $output{srcpkg})) {
         my $data=suseapi("source", $factory, $pkgname, "_meta");
         if((my $devel=$data->{devel}->[0])) {
             if($devel->{project} eq $factory) {
