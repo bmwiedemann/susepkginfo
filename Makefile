@@ -31,3 +31,11 @@ fetch:
 db/fedorasrc.dbm: cache/fedora/primary.xml
 	cat $< | ./parseprimary.pl
 	mv /dev/shm/parsearchives/*.dbm db/
+
+db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.xz
+	xzcat $^ | ./parsedebiansource.pl $$(basename $@)
+	mv /dev/shm/parsearchives/*.dbm db/
+
+db/ubuntusrc.dbm: cache/ubuntu/$M/debian/ubuntu/dists/devel/*/source/Sources.gz
+	zcat $^ | ./parsedebiansource.pl $$(basename $@)
+	mv /dev/shm/parsearchives/*.dbm db/
