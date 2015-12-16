@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
-use DB_File;
-use Fcntl;
+use dblib;
 
 sub usage()
 {
@@ -44,24 +43,6 @@ while(<>) {
     #print "$arch $pkgname $pkgsrcmap{$pkgname} $info\n";
 }
 
-print "writing out data...\n";
-sub writehash($$)
-{
-    my ($filename, $hash) = @_;
-    foreach my $k (sort keys(%$hash)) {
-        next unless ref($hash->{$k});
-        $hash->{$k}=join("\000", @{$hash->{$k}}); # convert arrayref into string
-    }
-    unlink $filename;
-    my %dbmap;
-    tie %dbmap, "DB_File", $filename, O_RDWR|O_CREAT, 0666;
-    %dbmap=%$hash;
-    untie %dbmap;
-}
-
-my $tmpdir='/dev/shm/parsearchives';
-mkdir $tmpdir;
-chmod 0755, $tmpdir or die "could not mkdir/chmod $tmpdir";
-writehash("$tmpdir/filepkg.dbm", \%filepkgmap);
-writehash("$tmpdir/pkgsrc.dbm", \%pkgsrcmap);
-
+dblib::init();
+dblib::writehash("filepkg.dbm", \%filepkgmap);
+dblib::writehash("pkgsrc.dbm", \%pkgsrcmap);

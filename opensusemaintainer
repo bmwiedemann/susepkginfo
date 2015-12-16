@@ -221,7 +221,7 @@ if(param) {
     if($output{"provides"}) {
         my $p=lookupdbm("provides", $output{"provides"});
         if($p) {
-            my @a=split(":", $p);
+            my @a=split("\000", $p);
             $output{binpkg}=$a[0];
             entrylist("binpkg", @a);
         } else {
