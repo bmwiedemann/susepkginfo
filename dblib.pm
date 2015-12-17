@@ -24,6 +24,7 @@ sub writehash($$)
     tie %dbmap, "DB_File", $filename, O_RDWR|O_CREAT, 0666;
     %dbmap=%$hash;
     untie %dbmap;
+    system("mv", $filename, "db/");
 }
 
 1;
