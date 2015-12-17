@@ -160,6 +160,7 @@ URLs = [
     "http://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
     "https://packages.debian.org/search?keywords=ARG", "Debian",
     "https://admin.fedoraproject.org/pkgdb/packages/ARG*/", "Fedora",
+    "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
     "https://pmbs.links2linux.de/search?search_text=ARG", "Packman",
@@ -253,7 +254,15 @@ if(param) {
         $output{srcpkg}=$p if $p;
         $html .= "binary package not found".br unless $p || $type eq "auto";
     }
-    if(my $pkgname=$output{srcpkg} and my $srcver=lookupdbm("opensusesrc", $output{srcpkg})) {
+    if(my $pkgname=$output{srcpkg}) {
+      my %ver;
+      for my $d (qw"opensuse gentoo archlinux fedora debian ubuntu") {
+          my $v = $ver{$d} = lookupdbm("${d}src", $output{srcpkg});
+          if($v) {
+              $html .= "found $output{srcpkg}-$v in $d<br/>";
+          }
+      }
+      if($ver{opensuse}) {
         my $data=suseapi("source", $factory, $pkgname, "_meta");
         if((my $devel=$data->{devel}->[0])) {
             if($devel->{project} eq $factory) {
@@ -266,7 +275,7 @@ if(param) {
             if($output{fullpath}) {push @extrainfo, "Path: $output{fullpath}".br}
             if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
-            $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $srcver
+            $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver{opensuse}
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$devel->{package}.changes?expand=1">changes</a>!.br.
                 qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "Package-Maintainers:\n";
@@ -276,6 +285,7 @@ if(param) {
             $data=suseapi("source", $devel->{project}, "_meta");
             printusers($data);
         } else { $html .= "Bad package on $factory &#8658; <a href=\"http://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
+      }
     }
 }
 selftest;
