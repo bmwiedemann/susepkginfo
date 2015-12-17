@@ -4,11 +4,11 @@ M=ftp5.gwdg.de/pub/linux
 all: sync
 update: db/pkgsrc.dbm db/provides.dbm
 
-db/pkgsrc.dbm: /mounts/dist/full/full-head-x86_64/ARCHIVES.gz
+db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
 	gzip -cd $< | ./parsearchives.pl
 	mv /dev/shm/parsearchives/*.dbm db/
 
-db/provides.dbm: /mounts/dist/full/full-head-x86_64/suse/setup/descr/packages
+db/provides.dbm: ${CACHEDIR}/opensuse/packages
 	./parsepackages.pl < $<
 	mv /dev/shm/parsearchives/*.dbm db/
 
@@ -21,7 +21,8 @@ clean:
 	rm -f db/*
 
 fetch:
-	mkdir -p ${CACHEDIR}/{fedora,debian,ubuntu,archlinux,gentoo}
+	mkdir -p ${CACHEDIR}/{opensuse,fedora,debian,ubuntu,archlinux,gentoo}
+	rsync -aP /mounts/dist/full/full-head-x86_64/suse/setup/descr/packages /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	cd ${CACHEDIR}/fedora ; wget -N http://$M/fedora/linux/development/rawhide/source/SRPMS/repodata/repomd.xml ;\
 	p=$$(zgrep -o '[^"]*primary.xml.gz' repomd.xml) ;\
 	wget -N http://$M/fedora/linux/development/rawhide/source/SRPMS/$$p ; gzip -cd $$(basename $$p) > primary.xml
