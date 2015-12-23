@@ -19,7 +19,7 @@ clean:
 	rm -f db/*
 
 fetch:
-	mkdir -p ${CACHEDIR}/{opensuse,fedora,debian,ubuntu,archlinux,gentoo}
+	mkdir -p ${CACHEDIR}/{opensuse,fedora,debian,ubuntu,archlinux,altlinux,gentoo}
 	rsync -aP /mounts/dist/full/full-head-x86_64/suse/setup/descr/packages /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	cd ${CACHEDIR}/fedora ; wget -N http://$M/fedora/linux/development/rawhide/source/SRPMS/repodata/repomd.xml ;\
 	p=$$(zgrep -o '[^"]*primary.xml.gz' repomd.xml) ;\
@@ -28,6 +28,7 @@ fetch:
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do wget -x -N http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo-x86 || cvs -d :pserver:anonymous@anoncvs.gentoo.org:/var/cvsroot co gentoo-x86 ; cd gentoo-x86 ; cvs up
+	cd ${CACHEDIR}/altlinux ; wget -N http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
 
 db/fedorasrc.dbm: cache/fedora/primary.xml
 	cat $< | ./parseprimary.pl
@@ -43,3 +44,6 @@ db/archlinuxsrc.dbm: cache/archlinux/*.db
 
 db/gentoosrc.dbm: cache/gentoo/gentoo-x86/CVS/Entries
 	for d in cache/gentoo/gentoo-x86/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parsegentoosource.pl $$(basename $@)
+
+db/altlinuxsrc.dbm: cache/altlinux/src.list
+	cat $< | ./parsealtlinuxsource.pl $$(basename $@)

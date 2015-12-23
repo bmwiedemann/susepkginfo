@@ -160,6 +160,7 @@ URLs = [
     "http://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
     "https://packages.debian.org/search?keywords=ARG", "Debian",
     "https://admin.fedoraproject.org/pkgdb/packages/ARG*/", "Fedora",
+    "http://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
@@ -256,7 +257,7 @@ if(param) {
     }
     if(my $pkgname=$output{srcpkg}) {
       my %ver;
-      for my $d (qw"opensuse gentoo archlinux fedora debian ubuntu") {
+      for my $d (qw"opensuse gentoo archlinux altlinux fedora debian ubuntu") {
           my $v = $ver{$d} = lookupdbm("${d}src", $output{srcpkg});
           if($v) {
               $html .= "found $output{srcpkg}-$v in $d<br/>";
