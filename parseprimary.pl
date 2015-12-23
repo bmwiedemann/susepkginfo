@@ -4,11 +4,12 @@ use dblib;
 
 sub usage()
 {
-    print "cat cache/fedora/primary.xml | $0\n";
+    print "cat cache/fedora/primary.xml | $0 fedorasrc.dbm\n";
     exit 0;
 }
 
-if(@ARGV) {usage}
+my $target=shift;
+if(!$target || @ARGV) {usage}
 
 my %data;
 my %srcmap;
@@ -24,5 +25,5 @@ while(<>) {
 }
 
 dblib::init();
-dblib::writehash("fedorasrc.dbm", \%srcmap);
+dblib::writehash("$target", \%srcmap);
 
