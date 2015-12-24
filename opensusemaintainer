@@ -135,7 +135,7 @@ body {
 );
 my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1 and not param("pkg");
 $input1=param("pkg");
-#$input1=~s/[^a-zA-Z0-9._-]//g; # sanitize FIXME
+$input1=~s/[<>"'&]//g; # sanitize
 
 my %typeselect=(
     "auto" => "anywhere",
