@@ -28,7 +28,7 @@ fetch:
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do wget -x -N http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	cd ${CACHEDIR}/slackware ; wget -N http://ftp5.gwdg.de/pub/linux/slackware/slackware-current/PACKAGES.TXT
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
-	cd ${CACHEDIR}/gentoo ; test -e gentoo-x86 || cvs -d :pserver:anonymous@anoncvs.gentoo.org:/var/cvsroot co gentoo-x86 ; cd gentoo-x86 ; cvs up
+	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
 	cd ${CACHEDIR}/altlinux ; wget -N http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
 
 db/fedorasrc.dbm: cache/fedora/primary.xml.gz
@@ -52,8 +52,8 @@ db/slackwaresrc.dbm: cache/slackware/PACKAGES.TXT
 db/archlinuxsrc.dbm: cache/archlinux/*.db
 	for f in $^ ; do tar tf $$f ; done | ./parsearchlinux.pl $$(basename $@)
 
-db/gentoosrc.dbm: cache/gentoo/gentoo-x86/CVS/Entries
-	for d in cache/gentoo/gentoo-x86/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parsegentoosource.pl $$(basename $@)
+db/gentoosrc.dbm: cache/gentoo/gentoo/*/*
+	for d in cache/gentoo/gentoo/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parsegentoosource.pl $$(basename $@)
 
 db/altlinuxsrc.dbm: cache/altlinux/src.list
 	cat $< | ./parsealtlinuxsource.pl $$(basename $@)
