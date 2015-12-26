@@ -133,12 +133,19 @@ body {
 .warning {background-color:#ffb}
  </style>},
   qq{<script type="text/javascript" src="//aw.zq1.de/code/js/bmwajax.js"></script>},
+  qq{<link type="image/vnd.microsoft.icon" rel="icon" href="/favicon.ico" />},
+  qq{<link rel="shortcut icon" href="/favicon.ico" />},
   qq{<meta name="viewport" content="width=400px, initial-scale=1" />}
 ]
 );
 my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1 and not param("pkg");
 $input1=param("pkg");
 $input1=~s/[<>"'&]//g; # sanitize
+
+if($input1 eq "favicon.ico") {
+    print header("image/x-icon").`cat /home/aw/html/maintainerfavicon.ico`;
+    exit 0;
+}
 
 my %typeselect=(
     "auto" => "anywhere",
