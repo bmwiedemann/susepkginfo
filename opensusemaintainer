@@ -126,6 +126,9 @@ body {
     margin: 1em;
     line-height: 1.4;
 }
+.myblock {display:inline-block}
+.distri {background-color:#fcf}
+.version {background-color:#cfc}
 .userlist {background-color:#dfd}
 .warning {background-color:#ffb}
  </style>},
@@ -260,9 +263,10 @@ if(param) {
       for my $d (qw"opensuse gentoo archlinux altlinux centos fedora mageia debian ubuntu slackware") {
           my $v = $ver{$d} = lookupdbm("${d}src", $output{srcpkg});
           if($v) {
-              $html .= "found $output{srcpkg}-$v in $d<br/>";
+              $html .= "<div class='myblock'>found $output{srcpkg}-<span class='version'>$v</span> in <span class='distri'>$d</span> ; </div> ";
           }
       }
+      $html .= "<br/>";
       if($ver{opensuse}) {
         my $data=suseapi("source", $factory, $pkgname, "_meta");
         if((my $devel=$data->{devel}->[0])) {
