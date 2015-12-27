@@ -2,7 +2,7 @@ CACHEDIR=cache
 M=ftp5.gwdg.de/pub/linux
 
 all: sync
-update: db/pkgsrc.dbm db/provides.dbm
+update: db/pkgsrc.dbm db/provides.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm
 
 db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
 	gzip -cd $< | ./parsearchives.pl
@@ -52,7 +52,7 @@ db/slackwaresrc.dbm: cache/slackware/PACKAGES.TXT
 db/archlinuxsrc.dbm: cache/archlinux/*.db
 	for f in $^ ; do tar tf $$f ; done | ./parsearchlinux.pl $$(basename $@)
 
-db/gentoosrc.dbm: cache/gentoo/gentoo/*/*
+db/gentoosrc.dbm: cache/gentoo/gentoo/.git/refs/heads/master
 	for d in cache/gentoo/gentoo/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parsegentoosource.pl $$(basename $@)
 
 db/altlinuxsrc.dbm: cache/altlinux/src.list
