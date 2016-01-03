@@ -142,6 +142,9 @@ my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $inpu
 $input1=param("pkg");
 $input1=~s/[<>"'&]//g; # sanitize
 
+if($input1 eq "robots.txt") {
+    exit 0;
+}
 if($input1 eq "favicon.ico") {
     print header("image/x-icon").`cat /home/aw/html/maintainerfavicon.ico`;
     exit 0;
