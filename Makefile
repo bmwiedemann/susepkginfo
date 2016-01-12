@@ -2,7 +2,7 @@ CACHEDIR=cache
 M=ftp5.gwdg.de/pub/linux
 
 all: sync
-update: db/pkgsrc.dbm db/provides.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm
+update: db/pkgsrc.dbm db/provides.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm
 
 db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
 	gzip -cd $< | ./parsearchives.pl
@@ -19,7 +19,7 @@ clean:
 	rm -f db/*
 
 fetch:
-	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo}
+	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux}
 	rsync -aP /mounts/dist/full/full-head-x86_64/suse/setup/descr/packages /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/source/SRPMS/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
@@ -29,6 +29,7 @@ fetch:
 	cd ${CACHEDIR}/slackware ; wget -N http://ftp5.gwdg.de/pub/linux/slackware/slackware-current/PACKAGES.TXT
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
+	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/voidlinux/void-packages.git ; cd void-packages ; git pull
 	cd ${CACHEDIR}/altlinux ; wget -N http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
 
 db/fedorasrc.dbm: cache/fedora/primary.xml.gz
@@ -54,6 +55,9 @@ db/archlinuxsrc.dbm: cache/archlinux/*.db
 
 db/gentoosrc.dbm: cache/gentoo/gentoo/.git/refs/heads/master
 	for d in cache/gentoo/gentoo/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parsegentoosource.pl $$(basename $@)
+
+db/voidlinuxsrc.dbm: cache/voidlinux/void-packages/.git/refs/heads/master
+	grep -B99 ^version= cache/voidlinux/void-packages/srcpkgs/*/template|./parsevoidlinuxsource.pl $$(basename $@)
 
 db/altlinuxsrc.dbm: cache/altlinux/src.list
 	cat $< | ./parsealtlinuxsource.pl $$(basename $@)
