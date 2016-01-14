@@ -287,7 +287,7 @@ if(param) {
             if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
             $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver{opensuse}
-                <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$devel->{package}.changes?expand=1">changes</a>!.br.
+                <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
                 qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "Package-Maintainers:\n";
             my $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
