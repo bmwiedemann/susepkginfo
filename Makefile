@@ -2,13 +2,16 @@ CACHEDIR=cache
 M=ftp5.gwdg.de/pub/linux
 
 all: sync
-update: db/pkgsrc.dbm db/provides.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm
+update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm
 
 db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
 	gzip -cd $< | ./parsearchives.pl
 
 db/provides.dbm: ${CACHEDIR}/opensuse/packages
 	./parsepackages.pl < $<
+
+db/develproject.dbm: cache/opensuse/develproject.xml
+	./parsedevelproject.pl $$(basename $@) < $<
 
 sync: update copy
 copy:
@@ -21,6 +24,7 @@ clean:
 fetch:
 	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux}
 	rsync -aP /mounts/dist/full/full-head-x86_64/suse/setup/descr/packages /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
+	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/source/SRPMS/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
 	cd ${CACHEDIR}/mageia ; wget -N http://ftp5.gwdg.de/pub/linux/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma

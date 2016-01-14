@@ -278,14 +278,10 @@ if(param) {
       }
       $html .= "<br/>";
       if($ver{opensuse}) {
-        my $data=suseapi("source", $factory, $pkgname, "_meta");
-        if((my $devel=$data->{devel}->[0])) {
-            if($devel->{project} eq $factory) {
-                # follow links within Factory e.g. python-base and kernel-*
-                $data=suseapi("source", $factory, $devel->{package}, "_meta");
-                $devel=$data->{devel}->[0];
-                die "strange error 67: factory has bad link" if(!$devel);
-            }
+        my $devel=lookupdbm("develproject", $pkgname);
+        if($devel) {
+            my @a=split("\000", $devel);
+            $devel={project=>$a[0], package=>$a[1]};
             my @extrainfo;
             if($output{fullpath}) {push @extrainfo, "Path: $output{fullpath}".br}
             if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
@@ -294,7 +290,7 @@ if(param) {
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$devel->{package}.changes?expand=1">changes</a>!.br.
                 qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "Package-Maintainers:\n";
-            $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
+            my $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
             printusers($data);
             $html .= hr."Project-Maintainers:";
             $data=suseapi("source", $devel->{project}, "_meta");
