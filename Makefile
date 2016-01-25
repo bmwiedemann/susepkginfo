@@ -7,8 +7,8 @@ update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/
 db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
 	gzip -cd $< | ./parsearchives.pl
 
-db/provides.dbm: ${CACHEDIR}/opensuse/packages
-	./parsepackages.pl < $<
+db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
+	gzip -cd $< | ./parsepackages.pl
 
 db/develproject.dbm: cache/opensuse/develproject.xml
 	./parsedevelproject.pl $$(basename $@) < $<
@@ -23,7 +23,7 @@ clean:
 
 fetch:
 	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux}
-	rsync -aP /mounts/dist/full/full-head-x86_64/suse/setup/descr/packages /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
+	rsync -aP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/source/SRPMS/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
