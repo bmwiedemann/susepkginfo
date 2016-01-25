@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use CGI qw":form :cgi a li start_html end_html br hr"; # "head" would collide with LWP:Simple
+use URI::Escape; # perl-URI / liburi-perl
 use XML::Simple;
 use LWP::Simple;
 # needs libcrypt-ssleay-perl for HTTPS
@@ -96,7 +97,8 @@ sub entrylist($@)
     if(@a>1) {
        $html .= "<div class='warning'>found more than one package that provides this: <ol>";
        foreach(@a) {
-           $html .= li(a({href=>"?pkg=$_&type=$type"},$_));
+           my $u = uri_escape($_);
+           $html .= li(a({href=>"?pkg=$u&type=$type"},$_));
        }
        $html .= "</ol></div>";
     }
