@@ -25,6 +25,7 @@ while(<>) {
         }
     }
     elsif (m/^\+([A-Z][a-z][a-z]):$/) {$data{section}=$1}
+    elsif (m/^-$data{section}:$/) {$data{section}=""}
     elsif ($data{pkg} && $data{section} eq "Prv") {
         my $name=$_;
         $name =~ s/ = .*//; # strip version
