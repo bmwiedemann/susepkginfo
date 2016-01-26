@@ -11,13 +11,29 @@ sub init()
     chmod 0755, $tmpdir or die "could not mkdir/chmod $tmpdir";
 }
 
-sub writehash($$)
+# input: arrayref
+# output: array
+sub dedup($)
 {
-    my ($filename, $hash) = @_;
+        my $arrayref=shift;
+        my %h;
+        my @a=();
+        foreach my $e (@$arrayref) {
+            next if($h{$e}++);
+            push(@a,$e);
+        }
+        return \@a;
+}
+
+sub writehash($$;$)
+{
+    my ($filename, $hash, $dedup) = @_;
     $filename="$tmpdir/$filename";
     foreach my $k (sort keys(%$hash)) {
-        next unless ref($hash->{$k});
-        $hash->{$k}=join("\000", @{$hash->{$k}}); # convert arrayref into string
+        my $list=$hash->{$k};
+        next unless ref($list);
+        if($dedup) {$list=dedup($list)}
+        $hash->{$k}=join("\000", @$list); # convert into string
     }
     unlink $filename;
     my %dbmap;
