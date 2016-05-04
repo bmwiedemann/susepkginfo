@@ -43,7 +43,7 @@ db/centossrc.dbm: cache/centos/primary.xml.gz
 	zcat $< | ./parseprimary.pl $$(basename $@)
 
 db/mageiasrc.dbm: cache/mageia/info.xml.lzma
-	lzma -cd $< | ./parsemageia.pl $$(basename $@)
+	xz -cd $< | ./parsemageia.pl $$(basename $@)
 
 db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.xz
 	xzcat $^ | ./parsedebiansource.pl $$(basename $@)
