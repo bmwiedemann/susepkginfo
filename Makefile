@@ -25,7 +25,7 @@ fetch:
 	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux}
 	rsync -aP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml
-	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/source/SRPMS/
+	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
 	cd ${CACHEDIR}/mageia ; wget -N http://ftp5.gwdg.de/pub/linux/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do wget -x -N http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
