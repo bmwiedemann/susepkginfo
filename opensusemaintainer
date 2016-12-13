@@ -274,7 +274,7 @@ if(param) {
     }
     if(my $pkgname=$output{srcpkg}) {
       my %ver;
-      for my $d (qw"opensuse gentoo archlinux voidlinux altlinux nixos centos fedora mageia debian ubuntu slackware") {
+      for my $d (qw"opensuse gentoo archlinux voidlinux altlinux nixos guix centos fedora mageia debian ubuntu slackware") {
           my $v = $ver{$d} = lookupdbm("${d}src", $output{srcpkg});
           if($v) {
               $html .= "<div class='myblock'>found $output{srcpkg}-<span class='version'>$v</span> in <span class='distri'>$d</span> ; </div> ";
