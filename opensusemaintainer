@@ -120,7 +120,7 @@ sub selftest()
 
 # main
 
-$html = header("text/html"). start_html(-title=>"$factory maintainer finder tool",
+$html = header("text/html"). start_html(-title=>"package finder tool",
 #-style=>"//aw.zq1.de/code/css/pure-min.css",
 -head=>[qq{<style type="text/css">
 body {
@@ -161,7 +161,7 @@ my %typeselect=(
     "command" => "command/executable (e.g. bash)");
 if(1) {
     $html .= start_form(-name=>"form", -method=>"get", -class=>"pure-form").
-        "<p>This tool allows you to find details about $factory packages
+        "<p>This tool allows you to find details about packages
         <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>".
         textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()").
         " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)." ".
