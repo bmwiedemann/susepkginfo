@@ -22,7 +22,7 @@ clean:
 	rm -f db/*
 
 fetch:
-	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux,nixos}
+	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux,nixos,guix}
 	rsync -ptLP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
@@ -31,6 +31,7 @@ fetch:
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do wget -x -N http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do wget -x -N http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	cd ${CACHEDIR}/nixos ; wget -N https://nixos.org/nixpkgs/packages.json.gz
+	cd ${CACHEDIR}/guix ; wget -4 -N https://www.gnu.org/software/guix/packages/packages.json
 	cd ${CACHEDIR}/slackware ; wget -N http://ftp5.gwdg.de/pub/linux/slackware/slackware-current/PACKAGES.TXT
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
