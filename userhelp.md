@@ -17,3 +17,4 @@ Search for partial names is not yet implemented.
 I used it for [openSUSE bugzilla screening]
 (https://bugzilla.opensuse.org/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=NEEDINFO&bug_status=REOPENED&chfieldfrom=40d&chfieldto=now&classification=openSUSE&email2=bnc-team-screening&emailassigned_to2=1&emailtype2=substring&list_id=2361161&order=changeddate%20DESC%2Cbug_id%20DESC&query_format=advanced)
 
+It might be useful to find a package in another distribution that might have a patch to fix your bug
