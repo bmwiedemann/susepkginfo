@@ -2,7 +2,7 @@ CACHEDIR=cache
 M=ftp5.gwdg.de/pub/linux
 
 all: sync
-update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm
+update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm
 
 db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
 	gzip -cd $< | ./parsearchives.pl
@@ -52,6 +52,9 @@ db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.
 
 db/ubuntusrc.dbm: cache/ubuntu/$M/debian/ubuntu/dists/devel/*/source/Sources.gz
 	zcat $^ | ./parsedebiansource.pl $$(basename $@)
+
+db/nixossrc.dbm: cache/nixos/packages.json.gz
+	zcat $< | ./parsenixossource.pl $$(basename $@)
 
 db/slackwaresrc.dbm: cache/slackware/PACKAGES.TXT
 	cat $< | ./parseslackware.pl $$(basename $@)
