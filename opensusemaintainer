@@ -178,6 +178,7 @@ URLs = [
     "http://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
+    "https://www.gnu.org/software/guix/packages/LETTER.html#ARG", "Guix",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
     "https://pmbs.links2linux.de/search?search_text=ARG", "Packman",
     "https://build.opensuse.org/search?search_text=ARG", "OBS",
@@ -188,7 +189,7 @@ function mysearch(val) {
      if(val.indexOf("/") > -1) {x.innerHTML=""; return;} // be smart and dont search for pathnames
      HTML="You can also search for <strong>"+val+"</strong> in ";
      for (var i = URLs.length-1; i>=0; i-=2) {
-         HTML+="<a href='"+URLs[i-1].replace("ARG",val)+"'>"+URLs[i]+"</a> ";
+         HTML+="<a href='"+URLs[i-1].replace("ARG",val).replace("LETTER",val[0])+"'>"+URLs[i]+"</a> ";
      }
      if(val == '') {HTML='';}
      x.innerHTML=HTML;
