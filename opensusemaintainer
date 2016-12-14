@@ -178,7 +178,7 @@ URLs = [
     "http://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
-    "https://www.gnu.org/software/guix/packages/LETTER.html#ARG", "Guix",
+    "https://www.gnu.org/software/guix/packages/LETTER#ARG", "Guix",
     "https://nixos.org/nixos/packages.html#ARG", "NixOS",
     "https://www.freebsd.org/cgi/ports.cgi?query=ARG", "FreeBSD",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
