@@ -162,7 +162,7 @@ my %typeselect=(
 if(1) {
     $html .= start_form(-name=>"form", -method=>"get", -class=>"pure-form").
         "<p>This tool allows you to find details about packages
-        <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a></p><p><fieldset>".
+        <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a><br>There are <a href='http://sophie.zarb.org/'>other tools like this</a>.</p><p><fieldset>".
         textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()").
         " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)." ".
         submit(-label=>"Search")."</fieldset></p>". end_form.
