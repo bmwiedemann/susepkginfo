@@ -180,6 +180,7 @@ URLs = [
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
     "https://www.gnu.org/software/guix/packages/LETTER.html#ARG", "Guix",
     "https://nixos.org/nixos/packages.html#ARG", "NixOS",
+    "https://www.freebsd.org/cgi/ports.cgi?query=ARG", "FreeBSD",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
     "https://pmbs.links2linux.de/search?search_text=ARG", "Packman",
     "https://build.opensuse.org/search?search_text=ARG", "OBS",
