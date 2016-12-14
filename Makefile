@@ -28,6 +28,7 @@ fetch:
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
 	cd ${CACHEDIR}/mageia ; wget -N http://ftp5.gwdg.de/pub/linux/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
+	# or http://ftp5.gwdg.de/pub/linux/mageia/distrib/cauldron/SRPMS/core/release/repodata/
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do wget -x -N http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do wget -x -N http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	cd ${CACHEDIR}/nixos ; wget -N https://nixos.org/nixpkgs/packages.json.gz
