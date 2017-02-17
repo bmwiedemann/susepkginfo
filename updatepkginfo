@@ -14,6 +14,7 @@ done
 
 set -e
 [ -n "$SSH_AUTH_SOCK" ]
+ssh-add -l > /dev/null 2>&1
 make fetch
 make
 
