@@ -1,0 +1,19 @@
+#!/bin/sh -x
+# to be run via cron
+# 0 4 * * * /path/to/updatepkginfo
+
+cd ~/code/cvs/perl/susepkginfo
+
+# set ssh agent for DB upload
+export SSH_AUTH_SOCK
+for s in `/bin/ls /tmp/ssh-*/*` ; do
+  SSH_AUTH_SOCK="$s"
+  #echo "trying $SSH_AUTH_SOCK"
+  ssh-add -l > /dev/null 2>&1 && break
+done
+
+set -e
+[ -n "$SSH_AUTH_SOCK" ]
+make fetch
+make
+
