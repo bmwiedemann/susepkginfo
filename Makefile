@@ -24,7 +24,7 @@ clean:
 fetch:
 	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux,nixos,guix}
 	rsync -ptLP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
-	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml
+	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml.new && mv ${CACHEDIR}/opensuse/develproject.xml.new ${CACHEDIR}/opensuse/develproject.xml
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
 	cd ${CACHEDIR}/mageia ; wget -N http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
