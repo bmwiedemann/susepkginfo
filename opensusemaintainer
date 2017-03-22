@@ -185,6 +185,7 @@ URLs = [
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
     "https://pmbs.links2linux.de/search?search_text=ARG", "Packman",
     "https://build.opensuse.org/search?search_text=ARG", "OBS",
+    "https://scc.suse.com/packages?package=ARG", "SLE",
     "https://software.opensuse.org/search?q=ARG", "openSUSE"
 ];
 function mysearch(val) {
