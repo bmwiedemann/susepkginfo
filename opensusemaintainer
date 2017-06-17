@@ -176,6 +176,7 @@ URLs = [
     "https://packages.debian.org/search?keywords=ARG", "Debian",
     "https://admin.fedoraproject.org/pkgdb/packages/ARG*/", "Fedora",
     "https://madb.mageia.org/package/list/application/0/t_search/ARG", "Mageia",
+    "http://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
     "http://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
