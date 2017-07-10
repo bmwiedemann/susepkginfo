@@ -15,7 +15,8 @@ db/develproject.dbm: cache/opensuse/develproject.xml
 
 sync: update copy
 copy:
-	rsync -azSP db/ vm11.zq1.de:/home/aw/html/db.suse/
+	[ `date +%u` = 1 ] || exclude=--exclude=filepkg.dbm ;\
+	rsync -azSP $$exclude db/ vm11.zq1.de:/home/aw/html/db.suse/
 	rsync -a opensusemaintainer vm11.zq1.de:/home/aw/inc/cgi-bin/public/
 
 clean:
