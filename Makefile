@@ -4,11 +4,8 @@ M=ftp5.gwdg.de/pub/linux
 all: sync
 update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
 
-db/pkgsrc.dbm: ${CACHEDIR}/opensuse/ARCHIVES.gz
-	gzip -cd $< | ./parsearchives.pl
-
-db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
-	gzip -cd $< | ./parsepackages.pl
+#db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
+#	gzip -cd $< | ./parsepackages.pl
 
 db/develproject.dbm: cache/opensuse/develproject.xml
 	./parsedevelproject.pl $$(basename $@) < $<
@@ -41,6 +38,12 @@ fetch:
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
 	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/voidlinux/void-packages.git ; cd void-packages ; git pull
 	cd ${CACHEDIR}/altlinux ; wget -N http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
+
+db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parseprimary.pl
+	gzip -cd $< | ./parseprimary.pl $$(basename $@)
+
+db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.gz ./parsefilelist.pl
+	gzip -cd $< | ./parsefilelist.pl $$(basename $@)
 
 db/fedorasrc.dbm: cache/fedora/primary.xml.gz
 	zcat $< | ./parseprimary.pl $$(basename $@)
