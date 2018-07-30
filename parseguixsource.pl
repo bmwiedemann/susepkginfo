@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 use strict;
-use dblib;
 use JSON::XS;
+use lib '.';
+use dblib;
 
 sub usage()
 {

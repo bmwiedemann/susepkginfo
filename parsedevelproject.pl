@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 use strict;
-use dblib;
 use XML::Simple;
+use lib '.';
+use dblib;
 
 sub usage()
 {
