@@ -14,6 +14,7 @@ if(!$target || @ARGV) {usage}
 
 my %data;
 my %srcmap;
+my $version;
 
 while(<>) {
     if (m{^  <(\w+)>([^<]+)</\1>}) {
@@ -21,7 +22,11 @@ while(<>) {
         $data{lc($1)}=$2;
     }
     if(m{<version .*ver="([^"]+)".*/>}) {
-        $srcmap{$data{name}} = $1;
+        $version = $1;
+        $srcmap{$data{name}} = $version;
+    }
+    if(m{<rpm:sourcerpm>(.+?)-[^-]+-[^-]+.src.rpm</rpm:sourcerpm>}) {
+        $srcmap{$1} = $version;
     }
 }
 
