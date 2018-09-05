@@ -22,7 +22,7 @@ $data=$data->{packages};
 foreach my $pkg (keys(%$data)) {
     my $v=$data->{$pkg};
     my $name=$v->{name};
-    unless($name=~s/-([^-]+)$//) {
+    unless($name=~s/-([0-9].*)//) {
         #warn("skipping $pkg because '$name' cannot be split");
         next;
     }
