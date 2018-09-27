@@ -174,7 +174,9 @@ qq{
 URLs = [
     "http://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
     "https://packages.debian.org/search?keywords=ARG", "Debian",
-    "https://admin.fedoraproject.org/pkgdb/packages/ARG*/", "Fedora",
+    "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=ARG*", "Fedora(koji)",
+    "https://src.fedoraproject.org/cgit/?q=ARG", "Fedora(git)",
+    "https://apps.fedoraproject.org/packages/s/ARG", "Fedora",
     "https://madb.mageia.org/package/list/application/0/t_search/ARG", "Mageia",
     "http://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
     "http://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
@@ -184,8 +186,8 @@ URLs = [
     "https://nixos.org/nixos/packages.html#ARG", "NixOS",
     "https://www.freebsd.org/cgi/ports.cgi?query=ARG", "FreeBSD",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
-    "https://pmbs.links2linux.de/search?search_text=ARG", "Packman",
-    "https://build.opensuse.org/search?search_text=ARG", "OBS",
+    "https://pmbs.links2linux.de/search?package=1&name=1&search_text=ARG", "Packman",
+    "https://build.opensuse.org/search?package=1&name=1&search_text=ARG", "OBS",
     "https://scc.suse.com/packages?package=ARG", "SLE",
     "https://software.opensuse.org/search?q=ARG", "openSUSE",
     "https://repology.org/metapackage/ARG/information", "repology"
@@ -195,7 +197,7 @@ function mysearch(val) {
      if(val.indexOf("/") > -1) {x.innerHTML=""; return;} // be smart and dont search for pathnames
      HTML="You can also search for <strong>"+val+"</strong> in ";
      for (var i = URLs.length-1; i>=0; i-=2) {
-         HTML+="<a href='"+URLs[i-1].replace("ARG",val).replace("LETTER",val[0])+"'>"+URLs[i]+"</a> ";
+         HTML+="<a href='"+URLs[i-1].replace("ARG",val).replace("LETTER",val[0].toUpperCase())+"'>"+URLs[i]+"</a> ";
      }
      if(val == '') {HTML='';}
      x.innerHTML=HTML;
