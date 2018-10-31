@@ -306,7 +306,7 @@ if(param) {
             $html .= hr."Project-Maintainers:";
             $data=suseapi("source", $devel->{project}, "_meta");
             printusers($data);
-        } else { $html .= "Bad package on $factory &#8658; <a href=\"http://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
+        } else { $html .= "Bad package on $factory &#8658; <a href=\"https://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
       }
     }
 }
