@@ -172,14 +172,14 @@ if(1) {
           document.form.pkg.select();'.
 qq{
 URLs = [
-    "http://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
+    "https://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
     "https://packages.debian.org/search?keywords=ARG", "Debian",
     "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=ARG*", "Fedora(koji)",
     "https://src.fedoraproject.org/cgit/?q=ARG", "Fedora(git)",
     "https://apps.fedoraproject.org/packages/s/ARG", "Fedora",
     "https://madb.mageia.org/package/list/application/0/t_search/ARG", "Mageia",
-    "http://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
-    "http://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
+    "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
+    "https://packages.altlinux.org/en/search?query=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
     "https://www.gnu.org/software/guix/packages/LETTER#ARG", "Guix",
