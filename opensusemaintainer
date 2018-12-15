@@ -111,6 +111,16 @@ sub lookupfilepkg($)
     return split("\000", $p||"");
 }
 
+sub get_distro_versions($)
+{
+    my $pkg=shift;
+    my %ver;
+    for my $d (qw"opensuse gentoo alpinelinux archlinux voidlinux altlinux nixos guix centos fedora mageia debian ubuntu slackware") {
+        $ver{$d} = lookupdbm("${d}src", $pkg);
+    }
+    return \%ver;
+}
+
 sub selftest()
 {
     lookupdbm("filepkg", "/bin/bash") eq "bash" or die "filepkg selftest failed";
@@ -281,15 +291,15 @@ if(param) {
         $html .= "binary package not found".br unless $p || $type eq "auto";
     }
     if(my $pkgname=$output{srcpkg}) {
-      my %ver;
-      for my $d (qw"opensuse gentoo alpinelinux archlinux voidlinux altlinux nixos guix centos fedora mageia debian ubuntu slackware") {
-          my $v = $ver{$d} = lookupdbm("${d}src", $output{srcpkg});
+      my $ver=get_distro_versions($output{srcpkg});
+      for my $d (sort(keys(%$ver))) {
+          my $v = $ver->{$d};
           if($v) {
               $html .= "<div class='myblock'>found $output{srcpkg}-<span class='version'>$v</span> in <span class='distri'>$d</span> ; </div> ";
           }
       }
       $html .= "<br/>";
-      if($ver{opensuse}) {
+      if($ver->{opensuse}) {
         my $devel=lookupdbm("develproject", $pkgname);
         if($devel) {
             my @a=split("\000", $devel);
@@ -298,7 +308,7 @@ if(param) {
             if($output{fullpath}) {push @extrainfo, "Path: $output{fullpath}".br}
             if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
-            $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver{opensuse}
+            $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver->{opensuse}
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
                 qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "Package-Maintainers:\n";
