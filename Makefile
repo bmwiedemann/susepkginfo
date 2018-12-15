@@ -2,7 +2,7 @@ CACHEDIR=cache
 M=ftp5.gwdg.de/pub/linux
 
 all: sync
-update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
+update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/alpinelinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
 
 #db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
 #	gzip -cd $< | ./parsepackages.pl
@@ -20,7 +20,7 @@ clean:
 	rm -f db/*
 
 fetch:
-	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,archlinux,altlinux,gentoo,voidlinux,nixos,guix}
+	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,alpinelinux,archlinux,altlinux,gentoo,voidlinux,nixos,guix}
 	#rsync -ptLP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	cd ${CACHEDIR}/opensuse && ../../getprimary http://$M/suse/opensuse/tumbleweed/repo/oss/
 	cd ${CACHEDIR}/opensuse && ../../getfilelists http://$M/suse/opensuse/tumbleweed/repo/oss/
@@ -34,6 +34,7 @@ fetch:
 	cd ${CACHEDIR}/nixos ; wget -N https://nixos.org/nixpkgs/packages.json.gz
 	cd ${CACHEDIR}/guix ; wget -4 -N https://www.gnu.org/software/guix/packages/packages.json
 	cd ${CACHEDIR}/slackware ; wget -N http://$M/slackware/slackware-current/PACKAGES.TXT
+	cd ${CACHEDIR}/alpinelinux ; wget -N http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
 	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/voidlinux/void-packages.git ; cd void-packages ; git pull
@@ -68,6 +69,9 @@ db/guixsrc.dbm: cache/guix/packages.json
 
 db/slackwaresrc.dbm: cache/slackware/PACKAGES.TXT
 	cat $< | ./parseslackware.pl $$(basename $@)
+
+db/alpinelinuxsrc.dbm: cache/alpinelinux/APKINDEX.tar.gz
+	tar -xOf $< APKINDEX | ./parsealpinelinux.pl $$(basename $@)
 
 db/archlinuxsrc.dbm: cache/archlinux/*.db
 	for f in $^ ; do tar tf $$f ; done | ./parsearchlinux.pl $$(basename $@)
