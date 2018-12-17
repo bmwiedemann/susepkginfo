@@ -18,12 +18,12 @@ my %srcmap;
 while(<>) {
     if (m{^(\w+): (.*)}) {
         #print "matched $1 $2\n";
-	my ($k,$v)=($1,$2);
+        my ($k,$v)=($1,$2);
         $data{lc($k)}=$v;
-	if($k eq "Version") {
+        if($k eq "Version") {
             $v=~s/-[^-]+$//; # strip revision
-	    $srcmap{$data{package}} = $v;
-	}
+            $srcmap{$data{package}} = $v;
+        }
     }
 }
 

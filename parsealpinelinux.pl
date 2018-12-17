@@ -19,9 +19,9 @@ while(<>) {
     chomp;
     if (m{^([a-zA-Z]):(.*)$}) {
         #print "matched $1 $2\n";
-	$data{$1}=$2;
+        $data{$1}=$2;
     } elsif ($_ eq "") {
-	$srcmap{$data{P}} = $data{V};
+        $srcmap{$data{P}} = $data{V};
         %data=();
     } else {
         die "unexpected input '$_'";
