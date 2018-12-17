@@ -85,3 +85,9 @@ db/voidlinuxsrc.dbm: cache/voidlinux/void-packages/.git/refs/heads/master
 
 db/altlinuxsrc.dbm: cache/altlinux/src.list
 	cat $< | ./parsealtlinuxsource.pl $$(basename $@)
+
+test:
+	for f in *.pl opensusemaintainer ; do \
+	    perl -wc $$f || exit 2; \
+	    ! grep $$'\t' $$f || exit 5 ;\
+	done
