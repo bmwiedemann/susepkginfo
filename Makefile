@@ -38,7 +38,7 @@ fetch:
 	cd ${CACHEDIR}/alpinelinux ; wget -N http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
-	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/voidlinux/void-packages.git ; cd void-packages ; git pull
+	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/void-linux/void-packages.git ; cd void-packages ; git pull
 	cd ${CACHEDIR}/altlinux ; wget -N http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
 
 db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parseprimary.pl
