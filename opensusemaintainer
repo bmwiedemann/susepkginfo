@@ -4,6 +4,7 @@ use CGI qw":form :cgi a li start_html end_html br hr"; # "head" would collide wi
 use URI::Escape; # perl-URI / liburi-perl
 use XML::Simple;
 use LWP::Simple;
+use JSON::XS;
 # needs libcrypt-ssleay-perl for HTTPS
 use DB_File;
 use Fcntl;
@@ -16,6 +17,7 @@ our $dbdir="/home/aw/html/db.suse";
 our $cachedir="$dbdir/xml/";
 our $expiry=31*24*60*60;
 our $html;
+our $data={};
 
 sub isfresh($)
 {
@@ -293,6 +295,8 @@ if(param) {
     }
     if(my $pkgname=$output{srcpkg}) {
       my $ver=get_distro_versions($output{srcpkg});
+      $data->{distroversion}=$ver;
+      $data->{name}=$pkgname;
       for my $d (sort(keys(%$ver))) {
           my $v = $ver->{$d};
           if($v) {
@@ -328,5 +332,6 @@ $html .= hr."To report issues, contribute or run your own, please <a href='https
 if(!param("ajax")) {
     print $html;
 } else {
-    print header("text/plain");
+    print header("application/json").
+      JSON::XS->new->pretty->canonical->encode($data);
 }
