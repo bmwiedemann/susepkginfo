@@ -21,6 +21,7 @@ while(<>) {
         my ($k,$v)=($1,$2);
         $v=~s/\$\{(\w+)\}/$varmap{$1}/ge;
         #print "matched $k $v\n";
+        $v=~s/^"(.*)"$/$1/;
         $srcmap{$k} = $v;
         next;
     }
