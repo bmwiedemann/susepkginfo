@@ -1,5 +1,6 @@
 CACHEDIR=cache
 M=ftp5.gwdg.de/pub/linux
+wget=wget --progress=dot:mega -N
 export PERL_HASH_SEED = 42
 
 all: sync
@@ -28,18 +29,18 @@ fetch:
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml.new && mv ${CACHEDIR}/opensuse/develproject.xml.new ${CACHEDIR}/opensuse/develproject.xml
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
-	cd ${CACHEDIR}/mageia ; wget -N http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
+	cd ${CACHEDIR}/mageia ; ${wget} http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	echo or http://$M/mageia/distrib/cauldron/SRPMS/core/release/repodata/
-	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do wget -x -N http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
-	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do wget -x -N http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
-	cd ${CACHEDIR}/nixos ; wget -N https://nixos.org/nixpkgs/packages.json.gz
-	cd ${CACHEDIR}/guix ; wget -4 -N https://www.gnu.org/software/guix/packages/packages.json
-	cd ${CACHEDIR}/slackware ; wget -N http://$M/slackware/slackware-current/PACKAGES.TXT
-	cd ${CACHEDIR}/alpinelinux ; wget -N http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
-	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do wget -N http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
+	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
+	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do ${wget} -x http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
+	cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
+	cd ${CACHEDIR}/guix ; ${wget} -4 https://www.gnu.org/software/guix/packages/packages.json
+	cd ${CACHEDIR}/slackware ; ${wget} http://$M/slackware/slackware-current/PACKAGES.TXT
+	cd ${CACHEDIR}/alpinelinux ; ${wget} http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
+	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do ${wget} http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
 	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/void-linux/void-packages.git ; cd void-packages ; git pull
-	cd ${CACHEDIR}/altlinux ; wget -N http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
+	cd ${CACHEDIR}/altlinux ; ${wget} http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
 
 db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parseprimary.pl
 	gzip -cd $< | ./parseprimary.pl $$(basename $@)

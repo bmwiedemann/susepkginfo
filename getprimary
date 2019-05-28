@@ -1,5 +1,5 @@
 #!/bin/sh -x
 wget -N $1/repodata/repomd.xml
 p=$(zgrep -o '[^"]*primary.xml.gz' repomd.xml)
-wget -nc $1/$p
+wget --progress=dot:mega -nc $1/$p
 ln -f $(basename $p) primary.xml.gz
