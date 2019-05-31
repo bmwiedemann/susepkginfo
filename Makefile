@@ -4,7 +4,7 @@ wget=wget --progress=dot:mega -N
 export PERL_HASH_SEED = 42
 
 all: sync
-update: db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/alpinelinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
+update: db/opensusesrc.dbm db/filepkg.dbm db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/alpinelinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
 
 #db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
 #	gzip -cd $< | ./parsepackages.pl
