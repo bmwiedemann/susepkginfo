@@ -7,10 +7,10 @@ all: sync
 update: db/opensusesrc.dbm db/filepkg.dbm db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/alpinelinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
 
 #db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
-#	gzip -cd $< | ./parsepackages.pl
+#	gzip -cd $< | ./parser/parsepackages.pl
 
 db/develproject.dbm: cache/opensuse/develproject.xml
-	./parsedevelproject.pl $$(basename $@) < $<
+	./parser/parsedevelproject.pl $$(basename $@) < $<
 
 sync: update copy
 copy:
@@ -42,50 +42,50 @@ fetch:
 	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/void-linux/void-packages.git ; cd void-packages ; git pull
 	cd ${CACHEDIR}/altlinux ; ${wget} http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
 
-db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parseprimary.pl
-	gzip -cd $< | ./parseprimary.pl $$(basename $@)
+db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parser/parseprimary.pl
+	gzip -cd $< | ./parser/parseprimary.pl $$(basename $@)
 
-db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.gz ./parsefilelist.pl
-	gzip -cd $< | ./parsefilelist.pl $$(basename $@)
+db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.gz ./parser/parsefilelist.pl
+	gzip -cd $< | ./parser/parsefilelist.pl $$(basename $@)
 
 db/fedorasrc.dbm: cache/fedora/primary.xml.gz
-	zcat $< | ./parseprimary.pl $$(basename $@)
+	zcat $< | ./parser/parseprimary.pl $$(basename $@)
 
 db/centossrc.dbm: cache/centos/primary.xml.gz
-	zcat $< | ./parseprimary.pl $$(basename $@)
+	zcat $< | ./parser/parseprimary.pl $$(basename $@)
 
 db/mageiasrc.dbm: cache/mageia/info.xml.lzma
-	xz -cd $< | ./parsemageia.pl $$(basename $@)
+	xz -cd $< | ./parser/parsemageia.pl $$(basename $@)
 
 db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.xz
-	xzcat $^ | ./parsedebiansource.pl $$(basename $@)
+	xzcat $^ | ./parser/parsedebiansource.pl $$(basename $@)
 
 db/ubuntusrc.dbm: cache/ubuntu/$M/debian/ubuntu/dists/devel/*/source/Sources.gz
-	zcat $^ | ./parsedebiansource.pl $$(basename $@)
+	zcat $^ | ./parser/parsedebiansource.pl $$(basename $@)
 
 db/nixossrc.dbm: cache/nixos/packages.json.gz
-	zcat $< | ./parsenixossource.pl $$(basename $@)
+	zcat $< | ./parser/parsenixossource.pl $$(basename $@)
 
 db/guixsrc.dbm: cache/guix/packages.json
-	cat $< | ./parseguixsource.pl $$(basename $@)
+	cat $< | ./parser/parseguixsource.pl $$(basename $@)
 
 db/slackwaresrc.dbm: cache/slackware/PACKAGES.TXT
-	cat $< | ./parseslackware.pl $$(basename $@)
+	cat $< | ./parser/parseslackware.pl $$(basename $@)
 
 db/alpinelinuxsrc.dbm: cache/alpinelinux/APKINDEX.tar.gz
-	tar -xOf $< APKINDEX | ./parsealpinelinux.pl $$(basename $@)
+	tar -xOf $< APKINDEX | ./parser/parsealpinelinux.pl $$(basename $@)
 
 db/archlinuxsrc.dbm: cache/archlinux/*.db
-	for f in $^ ; do tar tf $$f ; done | ./parsearchlinux.pl $$(basename $@)
+	for f in $^ ; do tar tf $$f ; done | ./parser/parsearchlinux.pl $$(basename $@)
 
 db/gentoosrc.dbm: cache/gentoo/gentoo/.git/refs/heads/master
-	for d in cache/gentoo/gentoo/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parsegentoosource.pl $$(basename $@)
+	for d in cache/gentoo/gentoo/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parser/parsegentoosource.pl $$(basename $@)
 
 db/voidlinuxsrc.dbm: cache/voidlinux/void-packages/.git/refs/heads/master
-	grep -B99 ^version= cache/voidlinux/void-packages/srcpkgs/*/template|./parsevoidlinuxsource.pl $$(basename $@)
+	grep -B99 ^version= cache/voidlinux/void-packages/srcpkgs/*/template|./parser/parsevoidlinuxsource.pl $$(basename $@)
 
 db/altlinuxsrc.dbm: cache/altlinux/src.list
-	cat $< | ./parsealtlinuxsource.pl $$(basename $@)
+	cat $< | ./parser/parsealtlinuxsource.pl $$(basename $@)
 
 test:
 	for f in *.pl opensusemaintainer ; do \
