@@ -73,9 +73,9 @@ sub lookupdbm($$)
 
 our %seen=();
 sub printusers($)
-{ my $data=shift;
+{ my $userdata=shift;
     my $ps;
-    unless ($data && ($ps=$data->{person})) {
+    unless ($userdata && ($ps=$userdata->{person})) {
         $html .= "No persons associated with this package<br/>\n";
         return;
     } else {
