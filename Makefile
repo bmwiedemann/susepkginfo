@@ -16,7 +16,7 @@ sync: update copy
 copy:
 	[ `date +%u` = 1 ] || exclude=--exclude=filepkg.dbm ;\
 	rsync -azvSP $$exclude db/ vm11.zq1.de:/home/aw/html/db.suse/
-	rsync -a opensusemaintainer vm11.zq1.de:/home/aw/inc/cgi-bin/public/
+	rsync -a opensusemaintainer bugzillaproxy vm11.zq1.de:/home/aw/inc/cgi-bin/public/
 
 clean:
 	rm -f db/*

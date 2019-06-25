@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w
+# 2019 by Bernhard M. Wiedemann <bwiedemann suse de>
+# tool to query bugzilla and filter the result to enhance it
+use strict;
+use CGI;
+use JSON::XS;
+use LWP::Simple;
+
+
+my $url='https://bugzilla.opensuse.org/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=NEEDINFO&bug_status=REOPENED&chfieldfrom=40d&chfieldto=now&classification=openSUSE&email2=bnc-team-screening&emailassigned_to2=1&emailtype2=substring&list_id=11339020&order=changeddate%20DESC%2Cbug_id%20DESC&query_format=advanced';
+
+sub filter()
+{
+    my $baseurl="https://bugzilla.opensuse.org";
+    s!</head>!<base href="$baseurl/">\n$&!;
+    s!( href=")([^/])!$1$baseurl/$2!g;
+}
+
+print CGI::header("text/html");
+$_=get($url);
+filter();
+print $_;
