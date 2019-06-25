@@ -317,11 +317,13 @@ if(param) {
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
                 qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "Package-Maintainers:\n";
-            my $data=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
-            printusers($data);
+            my $obsdata=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
+            $data->{obs}{pkg}=$obsdata;
+            printusers($obsdata);
             $html .= hr."Project-Maintainers:";
-            $data=suseapi("source", $devel->{project}, "_meta");
-            printusers($data);
+            $obsdata=suseapi("source", $devel->{project}, "_meta");
+            $data->{obs}{prj}=$obsdata;
+            printusers($obsdata);
         } else { $html .= "Bad package on $factory &#8658; <a href=\"https://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
       }
     }
