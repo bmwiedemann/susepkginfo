@@ -31,6 +31,23 @@ sub isfresh($)
     return($mtime>time-$expiry*$factor);
 }
 
+my %charmap=( # user name char map based on https://en.wikipedia.org/wiki/ISO/IEC_8859-1
+"\xc4", "Ae",
+"\xd6", "Oe",
+"\xdc", "Ue",
+"\xe4", "ae",
+"\xe8", "e",
+"\xe9", "e",
+"\xea", "e",
+"\xeb", "e",
+"\xec", "i",
+"\xed", "i",
+"\xee", "i",
+"\xef", "i",
+"\xf6", "oe",
+"\xfc", "ue",
+);
+
 sub cachedget
 {
     my $urlbase='https://api.opensuse.org/public';
@@ -54,6 +71,9 @@ sub cachedget
         print $f $xmldata;
         close $f;
         rename("$cachefile.new", "$cachefile") or warn "could not rename cachefile";
+    }
+    for my $c (keys %charmap) {
+        $xmldata=~s/$c/$charmap{$c}/g;
     }
     return $xmldata;
 }
