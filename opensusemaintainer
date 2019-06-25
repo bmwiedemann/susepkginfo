@@ -10,14 +10,16 @@ use DB_File;
 use Fcntl;
 use Time::HiRes qw"gettimeofday tv_interval";
 
-
 our $debug=1;
+our $want_persondetails=0;
 our $factory="openSUSE:Factory";
 our $dbdir="/home/aw/html/db.suse";
 our $cachedir="$dbdir/xml/";
 our $expiry=31*24*60*60;
 our $html;
 our $data={};
+our ($username, $password);
+eval(`cat /home/bernhard/.bugzillarc`);
 
 sub isfresh($)
 {
@@ -32,6 +34,9 @@ sub isfresh($)
 sub cachedget
 {
     my $urlbase='https://api.opensuse.org/public';
+    if($username) {
+        $urlbase=~s!(api[^/]*).*!$username:$password\@$1!;
+    }
     my $cachefile=$cachedir.join(',', @_);
     my $url=$urlbase."/".join("/", @_);
     my $xmldata;
@@ -87,6 +92,7 @@ sub printusers($)
             my $r=$p->{role};
             if($r eq "bugowner") {$r=CGI::strong($r)}
             $html .= qq{<li>$r: <a href="https://build.opensuse.org/user/show/$user">$user</a>\n</li>};
+            $data->{obs}{person}{$user}=suseapi("person", $user) if $want_persondetails;
         }
         $html .= "</ul></div>\n";
     }
@@ -155,6 +161,7 @@ body {
 my $input1=$ENV{PATH_INFO}||""; $input1=~s{^/}{}; param("pkg", $input1) if $input1 and not param("pkg");
 $input1=param("pkg") || "";
 $input1=~s/[<>"'&]//g; # sanitize
+$want_persondetails=1 if param("persondetails");
 
 if($input1 eq "robots.txt") {
     exit 0;
