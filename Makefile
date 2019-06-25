@@ -17,7 +17,7 @@ sync: update copy
 copy:
 	[ `date +%u` = 1 ] || exclude=--exclude=filepkg.dbm ;\
 	rsync -rlptzvSP $$exclude db/ $T:/home/aw/html/db.suse/
-	rsync -pt opensusemaintainer $T:/home/aw/inc/cgi-bin/public/
+	rsync -pt opensusemaintainer bugzillaproxy $T:/home/aw/inc/cgi-bin/public/
 
 clean:
 	rm -f db/*
