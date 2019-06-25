@@ -62,7 +62,7 @@ sub suseapi
 {
     my $xml=cachedget(@_);
     return unless $xml;
-    return eval{XMLin($xml, ForceArray => 1)}||undef;
+    return eval{XMLin($xml, ForceArray => ["person", "repository", "path", "arch", "globalrole", "enable", "disable"])}||undef;
 }
 
 sub lookupdbm($$)
