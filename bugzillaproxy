@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 # 2019 by Bernhard M. Wiedemann <bwiedemann suse de>
 # tool to query bugzilla and filter the result to enhance it
+# https://aw.zq1.de/cgi-bin/public/bugzillaproxy/
 use strict;
 use CGI;
 use JSON::XS;
@@ -13,7 +14,7 @@ sub filter()
 {
     my $baseurl="https://bugzilla.opensuse.org";
     s!</head>!<base href="$baseurl/">\n$&!;
-    s!( href=")([^/])!$1$baseurl/$2!g;
+    s!( (?:src|href)=")([^/])!$1$baseurl/$2!g;
 }
 
 print CGI::header("text/html");
