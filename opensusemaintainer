@@ -169,7 +169,7 @@ my %typeselect=(
     "srcpkg" => "source package name (e.g. Mesa)",
     "binpkg" => "binary package name (e.g. Mesa-32bit)",
     "provides" => "a package's provides (e.g. Mesa(x86-64))",
-    "fullpath" => "full path/filename (e.g. /etc/drirc)",
+    "fullpath" => "full path/filename (e.g. /etc/rsyncd.conf)",
     "command" => "command/executable (e.g. cat)");
 if(1) {
     $html .= start_form(-name=>"form", -method=>"get", -class=>"pure-form").
