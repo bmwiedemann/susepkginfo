@@ -40,7 +40,7 @@ fetch:
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do ${wget} http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
 	cd ${CACHEDIR}/gentoo ; test -e gentoo || git clone --depth 1 https://github.com/gentoo/gentoo.git ; cd gentoo ; git pull
 	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/void-linux/void-packages.git ; cd void-packages ; git pull
-	cd ${CACHEDIR}/altlinux ; ${wget} http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list
+	cd ${CACHEDIR}/altlinux ; ${wget} http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list.xz
 
 db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parser/parseprimary.pl
 	gzip -cd $< | ./parser/parseprimary.pl $$(basename $@)
@@ -84,8 +84,8 @@ db/gentoosrc.dbm: cache/gentoo/gentoo/.git/refs/heads/master
 db/voidlinuxsrc.dbm: cache/voidlinux/void-packages/.git/refs/heads/master
 	grep -B99 ^version= cache/voidlinux/void-packages/srcpkgs/*/template|./parser/parsevoidlinuxsource.pl $$(basename $@)
 
-db/altlinuxsrc.dbm: cache/altlinux/src.list
-	cat $< | ./parser/parsealtlinuxsource.pl $$(basename $@)
+db/altlinuxsrc.dbm: cache/altlinux/src.list.xz
+	xz -cd $< | ./parser/parsealtlinuxsource.pl $$(basename $@)
 
 test:
 	for f in *.pl opensusemaintainer ; do \
