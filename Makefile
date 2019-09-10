@@ -34,7 +34,7 @@ fetch:
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do ${wget} -x http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
-	cd ${CACHEDIR}/guix ; ${wget} -4 https://www.gnu.org/software/guix/packages/packages.json
+	cd ${CACHEDIR}/guix ; ${wget} https://guix.gnu.org/packages.json
 	cd ${CACHEDIR}/slackware ; ${wget} http://$M/slackware/slackware-current/PACKAGES.TXT
 	cd ${CACHEDIR}/alpinelinux ; ${wget} http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do ${wget} http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
