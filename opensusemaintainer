@@ -201,7 +201,7 @@ URLs = [
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
     "https://pmbs.links2linux.de/search?package=1&name=1&search_text=ARG", "Packman",
     "https://build.opensuse.org/search?package=1&name=1&search_text=ARG", "OBS",
-    "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15&arch=x86_64&query=ARG", "SLE",
+    "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.1&arch=x86_64&query=ARG", "SLE",
     "https://software.opensuse.org/search?q=ARG", "openSUSE",
     "https://release-monitoring.org/projects/search/?pattern=ARG", "release-monitoring",
     "https://repology.org/metapackage/ARG/information", "repology"
