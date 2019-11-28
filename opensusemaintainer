@@ -3,7 +3,7 @@ use strict;
 use CGI qw":form :cgi a li start_html end_html br hr"; # "head" would collide with LWP:Simple
 use URI::Escape; # perl-URI / liburi-perl
 use XML::Simple;
-use LWP::Simple;
+#use LWP::Simple;
 use JSON::XS;
 # needs libcrypt-ssleay-perl for HTTPS
 use DB_File;
@@ -29,6 +29,13 @@ sub isfresh($)
     $factor=3 if($cachefile=~m/source,openSUSE:Factory,.*,_meta/);
     return 0 unless $mtime;
     return($mtime>time-$expiry*$factor);
+}
+
+sub get($)
+{
+    open(my $pipe, "-|", qw"curl -s", $_[0]) or return "error $!";
+    local $/;
+    return scalar <$pipe>;
 }
 
 my %charmap=( # user name char map based on https://en.wikipedia.org/wiki/ISO/IEC_8859-1
