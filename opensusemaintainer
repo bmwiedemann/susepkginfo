@@ -204,6 +204,7 @@ URLs = [
     "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.1&arch=x86_64&query=ARG", "SLE",
     "https://software.opensuse.org/search?q=ARG", "openSUSE",
     "https://release-monitoring.org/projects/search/?pattern=ARG", "release-monitoring",
+    "https://pkgs.org/search/?q=ARG", "pkgs.org",
     "https://repology.org/metapackage/ARG/information", "repology"
 ];
 function mysearch(val) {
