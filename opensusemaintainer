@@ -38,7 +38,7 @@ sub get($)
     return scalar <$pipe>;
 }
 
-my %charmap=( # user name char map based on https://en.wikipedia.org/wiki/ISO/IEC_8859-1
+our %charmap=( # user name char map based on https://en.wikipedia.org/wiki/ISO/IEC_8859-1
 "\xc4", "Ae",
 "\xd6", "Oe",
 "\xdc", "Ue",
