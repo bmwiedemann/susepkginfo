@@ -117,7 +117,7 @@ sub get_distro_versions($)
 {
     my $pkg=shift;
     my %ver;
-    for my $d (qw"opensuse gentoo alpinelinux archlinux voidlinux altlinux nixos guix centos fedora mageia debian ubuntu slackware") {
+    for my $d (qw"opensuse gentoo alpinelinux archlinux voidlinux altlinux nixos guix centos fedora mageia pclinuxos debian ubuntu slackware") {
         $ver{$d} = lookupdbm("${d}src", $pkg);
     }
     return \%ver;

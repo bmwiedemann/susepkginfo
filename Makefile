@@ -22,7 +22,7 @@ clean:
 	rm -f db/*
 
 fetch:
-	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,alpinelinux,archlinux,altlinux,gentoo,voidlinux,nixos,guix}
+	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,alpinelinux,archlinux,altlinux,gentoo,voidlinux,nixos,guix,solus,pclinuxos}
 	#rsync -ptLP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
 	cd ${CACHEDIR}/opensuse && ../../getprimary http://$M/suse/opensuse/tumbleweed/repo/oss/
 	cd ${CACHEDIR}/opensuse && ../../getfilelists http://$M/suse/opensuse/tumbleweed/repo/oss/
@@ -31,6 +31,8 @@ fetch:
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
 	cd ${CACHEDIR}/mageia ; ${wget} http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	echo or http://$M/mageia/distrib/cauldron/SRPMS/core/release/repodata/
+	-cd ${CACHEDIR}/pclinuxos && ${wget} http://pclinuxos.mirror.wearetriple.com/pclinuxos/apt/pclinuxos/64bit/base/pkglist.x86_64.bz2
+	-cd ${CACHEDIR}/solus && ${wget} https://mirrors.rit.edu/solus/packages/unstable/eopkg-index.xml
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do ${wget} -x http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
@@ -56,6 +58,9 @@ db/centossrc.dbm: cache/centos/primary.xml.gz
 
 db/mageiasrc.dbm: cache/mageia/info.xml.lzma
 	xz -cd $< | ./parser/parsemageia.pl $$(basename $@)
+
+db/pclinuxossrc.dbm: cache/pclinuxos/pkglist.x86_64.bz2
+	bzip2 -cd $< | parser/parsepclinuxos.pl $$(basename $@)
 
 db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.xz
 	xzcat $^ | ./parser/parsedebiansource.pl $$(basename $@)
