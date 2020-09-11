@@ -1,5 +1,5 @@
 CACHEDIR=cache
-M=ftp5.gwdg.de/pub/linux
+M=ftp.gwdg.de/pub/linux
 wget=wget --progress=dot:mega -N
 export PERL_HASH_SEED = 42
 
@@ -27,7 +27,7 @@ fetch:
 	cd ${CACHEDIR}/opensuse && ../../getprimary http://$M/suse/opensuse/tumbleweed/repo/oss/
 	cd ${CACHEDIR}/opensuse && ../../getfilelists http://$M/suse/opensuse/tumbleweed/repo/oss/
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml.new && mv ${CACHEDIR}/opensuse/develproject.xml.new ${CACHEDIR}/opensuse/develproject.xml
-	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
+	-cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
 	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
 	cd ${CACHEDIR}/mageia ; ${wget} http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	echo or http://$M/mageia/distrib/cauldron/SRPMS/core/release/repodata/
@@ -35,8 +35,8 @@ fetch:
 	-cd ${CACHEDIR}/solus && ${wget} https://mirrors.rit.edu/solus/packages/unstable/eopkg-index.xml
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do ${wget} -x http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
-	cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
-	cd ${CACHEDIR}/guix ; ${wget} https://guix.gnu.org/packages.json
+	#cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
+	cd ${CACHEDIR}/guix ; rm packages.json ; ${wget} https://guix.gnu.org/packages.json ; touch packages.json
 	cd ${CACHEDIR}/slackware ; ${wget} http://$M/slackware/slackware-current/PACKAGES.TXT
 	cd ${CACHEDIR}/alpinelinux ; ${wget} http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
 	cd ${CACHEDIR}/archlinux ; for p in core community multilib extra ; do ${wget} http://$M/archlinux/$$p/os/x86_64/$$p.db ; done #git clone https://projects.archlinux.org/git/svntogit/packages.git ; git clone https://projects.archlinux.org/git/svntogit/community.git
