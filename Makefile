@@ -62,6 +62,9 @@ db/mageiasrc.dbm: cache/mageia/info.xml.lzma
 db/pclinuxossrc.dbm: cache/pclinuxos/pkglist.x86_64.bz2
 	bzip2 -cd $< | parser/parsepclinuxos.pl $$(basename $@)
 
+db/solussrc.dbm: cache/solus/eopkg-index.xml
+	parser/parsesolus.pl $$(basename $@) < $<
+
 db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.xz
 	xzcat $^ | ./parser/parsedebiansource.pl $$(basename $@)
 
