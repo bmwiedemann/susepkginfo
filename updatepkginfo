@@ -19,5 +19,7 @@ export PERL_HASH_SEED=42
 make fetch
 setarch -R make
 
+echo ======================================================================
+
 cd ~/code/cvs/perl/impryo
 setarch -R make && ./sync.sh
