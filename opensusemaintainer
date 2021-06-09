@@ -125,7 +125,7 @@ sub get_distro_versions($)
 
 sub selftest()
 {
-    lookupdbm("filepkg", "/bin/bash") eq "bash" or die "filepkg selftest failed";
+    lookupdbm("filepkg", "/usr/bin/zgrep") eq "gzip" or die "filepkg selftest failed";
     lookupdbm("pkgsrc", "Mesa-32bit") eq "Mesa" or die "pkgsrc selftest failed";
     lookupdbm("provides", "Mesa(x86-64)") eq "Mesa" or die "provides selftest failed";
 }
