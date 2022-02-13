@@ -43,7 +43,7 @@ sub cachedget
     } else {
         my $t=[gettimeofday];
         $xmldata=get($url);
-        $html .= "<span style='color:#7b7'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
+        $html .= "<span class='text-success'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
         return unless $xmldata;
         open(my $f, ">", "$cachefile.new") or warn "could not write cachefile: $!";
         print $f $xmldata;
@@ -97,7 +97,7 @@ sub entrylist($@)
     my $type=shift;
     my @a=@_;
     if(@a>1) {
-       $html .= "<div class='warning'>found more than one package that provides this: <ol>";
+       $html .= "<div class='text-warning'>found more than one package that provides this: <ol>";
        foreach(@a) {
            my $u = uri_escape($_);
            $html .= li(a({href=>"?pkg=$u&type=$type"},$_));
@@ -134,18 +134,14 @@ sub selftest()
 
 $html = header("text/html"). start_html(-title=>"package finder tool",
 #-style=>"//aw.zq1.de/code/css/pure-min.css",
--head=>[qq{<style type="text/css">
-body {
-    background-color:#f8f8f8;
-    margin: 1em;
-    line-height: 1.4;
-}
-.myblock {display:inline-block}
-.distri {background-color:#fcf}
-.version {background-color:#cfc}
-.userlist {background-color:#dfd}
-.warning {background-color:#ffb}
+-head=>[qq{<link rel="stylesheet" href="https://static.opensuse.org/chameleon-3.0/dist/css/chameleon.css">},
+qq{<style type="text/css">
+.distri {font-weight: bold}
+.version {color: var(--pink)}
  </style>},
+  qq{<script defer src="https://static.opensuse.org/chameleon-3.0/dist/js/jquery.slim.js"></script>},
+  qq{<script defer src="https://static.opensuse.org/chameleon-3.0/dist/js/bootstrap.bundle.js"></script>},
+  qq{<script defer src="https://static.opensuse.org/chameleon-3.0/dist/js/chameleon.js"></script>},
   qq{<script type="text/javascript" src="//aw.zq1.de/code/js/bmwajax.js"></script>},
   qq{<link type="image/vnd.microsoft.icon" rel="icon" href="/favicon.ico" />},
   qq{<link rel="shortcut icon" href="/favicon.ico" />},
@@ -172,12 +168,13 @@ my %typeselect=(
     "fullpath" => "full path/filename (e.g. /etc/rsyncd.conf)",
     "command" => "command/executable (e.g. cat)");
 if(1) {
-    $html .= start_form(-name=>"form", -method=>"get", -class=>"pure-form").
-        "<p>This tool allows you to find details about openSUSE packages (e.g. maintainer and development project)
-        <br/><a href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>read more</a><br>There are <a href='http://sophie.zarb.org/'>other tools like this</a>.</p><p><fieldset>".
-        textfield(-name=>'pkg', -class=>'text', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()").
-        " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -values=>[sort keys %typeselect], -labels=>\%typeselect)." ".
-        submit(-label=>"Search")."</fieldset></p>". end_form.
+    $html .= "<nav class='navbar navbar-expand-md'><a class='navbar-brand' href='/'><img src='https://static.opensuse.org/favicon.svg' class='d-inline-block align-top' alt='openSUSE' title='openSUSE' width='30' height='30'><span class='navbar-title'>Maintainer</span></a><button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbar-collapse'><svg width='1em' height='1em' viewBox='0 0 16 16' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z'></path></svg></button><div class='collapse navbar-collapse' id='navbar-collapse'><ul class='nav navbar-nav mr-auto flex-md-shrink-0'><li class='nav-item'><a class='nav-link' href='https://github.com/bmwiedemann/susepkginfo/blob/master/userhelp.md'>Help</a></li><li class='nav-item dropdown'><a class='nav-link dropdown-toggle' href='#' id='cat-menu-link' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Similar tools</a><div class='dropdown-menu'><a class='dropdown-item' href='http://sophie.zarb.org/'>Sophie</a></div></li></ul></div><button class='navbar-toggler megamenu-toggler' type='button' data-toggle='collapse' data-target='#megamenu' aria-expanded='true'><svg class='bi bi-grid' width='1em' height='1em' viewBox='0 0 16 16' fill='currentColor' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z'></path></svg></button></nav><main class='page-content flex-fill'><div class='container my-4'>".
+        start_form(-name=>"form", -method=>"get", -class=>"pure-form").
+        "<p class='text-center'>Find details about openSUSE packages (e.g. maintainer and development project)</p>
+        <p><fieldset class='inline-form justify-content-center'>".
+        textfield(-name=>'pkg', -class=>'form-control mr-1', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()").
+        " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -class=>'custom-select mr-1', -values=>[sort keys %typeselect], -labels=>\%typeselect)." ".
+        submit(-label=>"Search", -class=>'btn btn-primary')."</fieldset></p>". end_form.
         '<div id="replace"></div>'.
         qq'<script language="javascript" type="text/javascript">
           document.form.pkg.focus();
@@ -311,17 +308,17 @@ if(param) {
             my @a=split("\000", $devel);
             $devel={project=>$a[0], package=>$a[1]};
             my @extrainfo;
-            if($output{fullpath}) {push @extrainfo, "Path: $output{fullpath}".br}
-            if($output{provides}) {push @extrainfo, "Provides: $output{provides}".br}
-            if($output{binpkg}) {push @extrainfo, "Binary-Package: $output{binpkg}".br}
-            $html .= join("",@extrainfo).qq!Source-Package: <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver->{opensuse}
+            if($output{fullpath}) {push @extrainfo, "<strong>Path:</strong> $output{fullpath}".br}
+            if($output{provides}) {push @extrainfo, "<strong>Provides:</strong> $output{provides}".br}
+            if($output{binpkg}) {push @extrainfo, "<strong>Binary-Package:</strong> $output{binpkg}".br}
+            $html .= join("",@extrainfo).qq!<strong>Source-Package:</strong> <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver->{opensuse}
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
                 qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
-                "Package-Maintainers:\n";
+                "<strong>Package-Maintainers:</strong>\n";
             my $obsdata=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
             $data->{obs}{pkg}=$obsdata;
             printusers($obsdata);
-            $html .= hr."Project-Maintainers:";
+            $html .= hr."<strong>Project-Maintainers:</strong>";
             $obsdata=suseapi("source", $devel->{project}, "_meta");
             $data->{obs}{prj}=$obsdata;
             printusers($obsdata);
@@ -330,7 +327,7 @@ if(param) {
     }
 }
 selftest;
-$html .= hr."To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a>".
+$html .= "</div></main><footer class='footer'><div class='container'><div class='d-flex justify-content-between'><div class='footer-copyright'>© 2022 openSUSE contributors</div><div>To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a></div></div></div></footer>".
     end_html;
 if(!param("ajax")) {
     print $html;
