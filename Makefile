@@ -32,7 +32,7 @@ fetch:
 	cd ${CACHEDIR}/mageia ; ${wget} http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	echo or http://$M/mageia/distrib/cauldron/SRPMS/core/release/repodata/
 	-cd ${CACHEDIR}/pclinuxos && ${wget} http://pclinuxos.mirror.wearetriple.com/pclinuxos/apt/pclinuxos/64bit/base/pkglist.x86_64.bz2
-	-cd ${CACHEDIR}/solus && ${wget} https://mirrors.rit.edu/solus/packages/unstable/eopkg-index.xml
+	-cd ${CACHEDIR}/solus && ${wget} https://mirrors.rit.edu/solus/packages/unstable/eopkg-index.xml.xz
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do ${wget} -x http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
 	#cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
@@ -62,8 +62,8 @@ db/mageiasrc.dbm: cache/mageia/info.xml.lzma
 db/pclinuxossrc.dbm: cache/pclinuxos/pkglist.x86_64.bz2
 	bzip2 -cd $< | parser/parsepclinuxos.pl $$(basename $@)
 
-db/solussrc.dbm: cache/solus/eopkg-index.xml
-	parser/parsesolus.pl $$(basename $@) < $<
+db/solussrc.dbm: cache/solus/eopkg-index.xml.xz
+	xz -cd $< | parser/parsesolus.pl $$(basename $@)
 
 db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.xz
 	xzcat $^ | ./parser/parsedebiansource.pl $$(basename $@)
