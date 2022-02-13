@@ -298,7 +298,7 @@ if(param) {
       for my $d (sort(keys(%$ver))) {
           my $v = $ver->{$d};
           if($v) {
-              $html .= "<div class='myblock'>found $output{srcpkg}-<span class='version'>$v</span> in <span class='distri'>$d</span> ; </div> ";
+              $html .= "<div class='d-inline-block'>found $output{srcpkg}-<span class='version'>$v</span> in <span class='distri'>$d</span> ; </div> ";
           }
       }
       $html .= "<br/>";
@@ -313,7 +313,7 @@ if(param) {
             if($output{binpkg}) {push @extrainfo, "<strong>Binary-Package:</strong> $output{binpkg}".br}
             $html .= join("",@extrainfo).qq!<strong>Source-Package:</strong> <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver->{opensuse}
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
-                qq!devel-project: <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
+                qq!<strong>devel-project:</strong> <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "<strong>Package-Maintainers:</strong>\n";
             my $obsdata=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
             $data->{obs}{pkg}=$obsdata;
