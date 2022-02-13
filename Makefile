@@ -1,5 +1,6 @@
 CACHEDIR=cache
 M=ftp.gwdg.de/pub/linux
+T=root@vm11c.zq1.de.
 wget=wget --progress=dot:mega -N
 export PERL_HASH_SEED = 42
 
@@ -15,8 +16,8 @@ db/develproject.dbm: cache/opensuse/develproject.xml
 sync: update copy
 copy:
 	[ `date +%u` = 1 ] || exclude=--exclude=filepkg.dbm ;\
-	rsync -azvSP $$exclude db/ vm11.zq1.de:/home/aw/html/db.suse/
-	rsync -a opensusemaintainer vm11.zq1.de:/home/aw/inc/cgi-bin/public/
+	rsync -rlptzvSP $$exclude db/ $T:/home/aw/html/db.suse/
+	rsync -pt opensusemaintainer $T:/home/aw/inc/cgi-bin/public/
 
 clean:
 	rm -f db/*
