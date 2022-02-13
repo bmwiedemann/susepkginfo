@@ -185,7 +185,7 @@ URLs = [
     "https://packages.debian.org/search?keywords=ARG", "Debian",
     "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=ARG*", "Fedora(koji)",
     "https://src.fedoraproject.org/rpms/ARG", "Fedora(git)",
-    "https://apps.fedoraproject.org/packages/s/ARG", "Fedora",
+    "https://packages.fedoraproject.org/search?query=ARG", "Fedora",
     "https://madb.mageia.org/package/list/application/0/t_search/ARG", "Mageia",
     "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
     "https://pkgs.alpinelinux.org/packages?name=ARG&arch=x86_64", "Alpine",
