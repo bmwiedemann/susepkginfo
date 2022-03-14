@@ -1,4 +1,5 @@
 #!/bin/sh -x
+# SPDX-License-Identifier: GPL-2.0-only
 # to be run via cron
 # 0 4 * * * /path/to/updatepkginfo
 

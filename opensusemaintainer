@@ -1,4 +1,9 @@
 #!/usr/bin/perl -w
+# SPDX-License-Identifier: GPL-2.0-only
+# see COPYING for details
+# by Bernhard M. Wiedemann
+# with contributions from Sasi Olin
+
 use strict;
 use CGI qw":form :cgi a li start_html end_html br hr"; # "head" would collide with LWP:Simple
 use URI::Escape; # perl-URI / liburi-perl
