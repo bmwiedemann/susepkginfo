@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+# SPDX-License-Identifier: GPL-2.0-only
 use strict;
 use lib '.';
 use dblib;
