@@ -322,7 +322,7 @@ if(param) {
             if($output{fullpath}) {push @extrainfo, "<strong>Path:</strong> $output{fullpath}".br}
             if($output{provides}) {push @extrainfo, "<strong>Provides:</strong> $output{provides}".br}
             if($output{binpkg}) {push @extrainfo, "<strong>Binary-Package:</strong> $output{binpkg}".br}
-            $html .= join("",@extrainfo).qq!<strong>Source-Package:</strong> <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> $ver->{opensuse}
+            $html .= join("",@extrainfo).qq!<strong>Source-Package:</strong> <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> (<a href="https://code.opensuse.org/package/$pkgname">git</a>) $ver->{opensuse}
                 <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
                 qq!<strong>devel-project:</strong> <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
                 "<strong>Package-Maintainers:</strong>\n";
