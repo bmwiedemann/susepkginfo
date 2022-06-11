@@ -36,7 +36,7 @@ fetch:
 	-cd ${CACHEDIR}/solus && ${wget} https://mirrors.rit.edu/solus/packages/unstable/eopkg-index.xml.xz
 	cd ${CACHEDIR}/debian ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/unstable/$$p/source/Sources.xz ; done
 	cd ${CACHEDIR}/ubuntu ; for p in main universe multiverse restricted ; do ${wget} -x http://$M/debian/ubuntu/dists/devel/$$p/source/Sources.gz ; done
-	#cd ${CACHEDIR}/nixos ;${wget} https://nixos.org/nixpkgs/packages.json.gz
+	cd ${CACHEDIR}/nixos ;${wget} https://channels.nixos.org/nixos-unstable/packages.json.br
 	cd ${CACHEDIR}/guix ; rm packages.json ; ${wget} https://guix.gnu.org/packages.json ; touch packages.json
 	cd ${CACHEDIR}/slackware ; ${wget} http://$M/slackware/slackware-current/PACKAGES.TXT
 	cd ${CACHEDIR}/alpinelinux ; ${wget} http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/APKINDEX.tar.gz
@@ -72,8 +72,8 @@ db/debiansrc.dbm: cache/debian/$M/debian/debian/dists/unstable/*/source/Sources.
 db/ubuntusrc.dbm: cache/ubuntu/$M/debian/ubuntu/dists/devel/*/source/Sources.gz
 	zcat $^ | ./parser/parsedebiansource.pl $$(basename $@)
 
-db/nixossrc.dbm: cache/nixos/packages.json.gz
-	zcat $< | ./parser/parsenixossource.pl $$(basename $@)
+db/nixossrc.dbm: cache/nixos/packages.json.br
+	brotli -cd $< | ./parser/parsenixossource.pl $$(basename $@)
 
 db/guixsrc.dbm: cache/guix/packages.json
 	cat $< | ./parser/parseguixsource.pl $$(basename $@)
