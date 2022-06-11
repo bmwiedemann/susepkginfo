@@ -20,10 +20,11 @@ my %binpath=qw(/bin 1 /sbin 1 /usr/bin 1 /usr/sbin 1);
 open(APPARMORFD, ">", "db/apparmor-list.txt");
 
 while(<>) {
-    next unless m{\./(.*)\.rpm:    (.*)};
+    next unless m{^\./(.*)\.rpm:    (.*)};
     my ($pkg, $info)=($1, $2);
-    next unless $pkg=~m{suse/([^/]+)/([^/]+)};
+    next unless $pkg=~m{^([^/]+)/([^/]+)};
     my ($arch, $pkgname)=($1, $2);
+    $pkgname =~ s/-[^-]+-[^-]+\.\w+$//;
     if ($info=~m/^Version\s*: (\S+)/) {$data{$pkgname}{version}=$1}
     if ($info=~m/^Release\s*: (\S+)/) {$data{$pkgname}{release}=$1}
     if ($info=~m/^Source RPM\s*: (\S+)-[^-]+-[^-]+\.\w+\.rpm$/) {
@@ -51,5 +52,5 @@ while(<>) {
 }
 
 dblib::init();
-dblib::writehash("filepkg.dbm", \%filepkgmap);
+#dblib::writehash("filepkg.dbm", \%filepkgmap); # already covered by parsefilelist.pl
 dblib::writehash("pkgsrc.dbm", \%pkgsrcmap);

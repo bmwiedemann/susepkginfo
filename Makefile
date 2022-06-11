@@ -25,6 +25,7 @@ clean:
 fetch:
 	mkdir -p ${CACHEDIR}/{opensuse,fedora,centos,mageia,debian,ubuntu,slackware,alpinelinux,archlinux,altlinux,gentoo,voidlinux,nixos,guix,solus,pclinuxos}
 	#rsync -ptLP /mounts/dist/openSUSE/openSUSE-Factory/suse/setup/descr/packages.gz /mounts/dist/full/full-head-x86_64/ARCHIVES.gz ${CACHEDIR}/opensuse
+	cd ${CACHEDIR}/opensuse && ${wget} http://$M/suse/opensuse/tumbleweed/repo/oss/ARCHIVES.gz
 	cd ${CACHEDIR}/opensuse && ../../getprimary http://$M/suse/opensuse/tumbleweed/repo/oss/
 	cd ${CACHEDIR}/opensuse && ../../getfilelists http://$M/suse/opensuse/tumbleweed/repo/oss/
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml.new && mv ${CACHEDIR}/opensuse/develproject.xml.new ${CACHEDIR}/opensuse/develproject.xml
@@ -47,6 +48,9 @@ fetch:
 
 db/opensusesrc.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parser/parseprimary.pl
 	gzip -cd $< | ./parser/parseprimary.pl $$(basename $@)
+
+db/pkgsrc.dbm: cache/opensuse/ARCHIVES.gz
+	gzip -cd $< | parser/parsearchives.pl
 
 db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.gz ./parser/parsefilelist.pl
 	gzip -cd $< | ./parser/parsefilelist.pl $$(basename $@)
