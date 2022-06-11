@@ -1,6 +1,4 @@
 # for opensusemaintainer CGI:
-zypper in perl-Crypt-SSLeay
-aptitude install libcrypt-ssleay-perl
 
 run with podman:
 podman build -t opensusemaintainer .
