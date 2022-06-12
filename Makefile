@@ -28,8 +28,8 @@ fetch:
 	cd ${CACHEDIR}/opensuse && ../../getprimary http://$M/suse/opensuse/tumbleweed/repo/oss/
 	cd ${CACHEDIR}/opensuse && ../../getfilelists http://$M/suse/opensuse/tumbleweed/repo/oss/
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml.new && mv ${CACHEDIR}/opensuse/develproject.xml.new ${CACHEDIR}/opensuse/develproject.xml
-	-cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
-	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/7/os/x86_64
+	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
+	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/8-stream/BaseOS/x86_64/os/
 	cd ${CACHEDIR}/mageia ; ${wget} http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	echo or http://$M/mageia/distrib/cauldron/SRPMS/core/release/repodata/
 	-cd ${CACHEDIR}/pclinuxos && ${wget} http://pclinuxos.mirror.wearetriple.com/pclinuxos/apt/pclinuxos/64bit/base/pkglist.x86_64.bz2
