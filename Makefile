@@ -1,6 +1,6 @@
 CACHEDIR=cache
 M=ftp.gwdg.de/pub/linux
-T=root@vm11c.zq1.de.
+T=root@vm11c6.zq1.de.
 wget=wget --progress=dot:mega -N
 export PERL_HASH_SEED = 42
 
