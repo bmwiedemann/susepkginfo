@@ -46,14 +46,14 @@ fetch:
 	cd ${CACHEDIR}/voidlinux ; test -e void-packages || git clone --depth 1 https://github.com/void-linux/void-packages.git ; cd void-packages ; git pull
 	cd ${CACHEDIR}/altlinux ; ${wget} http://ftp.altlinux.org/pub/distributions/ALTLinux/Sisyphus/files/list/src.list.xz
 
-db/opensusesrc.dbm db/pkgsrc.dbm db/provides.dbm: ${CACHEDIR}/opensuse/primary.xml.gz ./parser/parseprimary.pl
-	gzip -cd $< | OPENSUSE=1 ./parser/parseprimary.pl $$(basename $@)
+db/opensusesrc.dbm db/pkgsrc.dbm db/provides.dbm: ${CACHEDIR}/opensuse/primary.xml.zst ./parser/parseprimary.pl
+	zstd -cd $< | OPENSUSE=1 ./parser/parseprimary.pl $$(basename $@)
 
 #db/pkgsrc.dbm: cache/opensuse/ARCHIVES.gz
 #	gzip -cd $< | parser/parsearchives.pl
 
-db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.gz ./parser/parsefilelist.pl
-	gzip -cd $< | ./parser/parsefilelist.pl $$(basename $@)
+db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.zst ./parser/parsefilelist.pl
+	zstd -cd $< | ./parser/parsefilelist.pl $$(basename $@)
 
 db/fedorasrc.dbm: cache/fedora/primary.xml.gz
 	zcat $< | ./parser/parseprimary.pl $$(basename $@)
