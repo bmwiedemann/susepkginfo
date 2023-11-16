@@ -80,7 +80,7 @@ db/nixossrc.dbm: cache/nixos/packages.json.br
 	brotli -cd $< | ./parser/parsenixossource.pl $$(basename $@)
 
 db/guixsrc.dbm: cache/guix/packages.json
-	cat $< | ./parser/parseguixsource.pl $$(basename $@)
+	gzip -cd $< | ./parser/parseguixsource.pl $$(basename $@)
 
 db/slackwaresrc.dbm: cache/slackware/PACKAGES.TXT
 	cat $< | ./parser/parseslackware.pl $$(basename $@)
