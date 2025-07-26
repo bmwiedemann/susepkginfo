@@ -213,7 +213,7 @@ URLs = [
     "https://software.opensuse.org/search?q=ARG", "openSUSE",
     "https://release-monitoring.org/projects/search/?pattern=ARG", "release-monitoring",
     "https://pkgs.org/search/?q=ARG", "pkgs.org",
-    "https://repology.org/metapackage/ARG/information", "repology"
+    "https://repology.org/project/ARG/information", "repology"
 ];
 function mysearch(val) {
      var x=document.getElementById("replace");
