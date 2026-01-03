@@ -197,7 +197,7 @@ URLs = [
     "https://koji.fedoraproject.org/koji/search?match=glob&amp;type=package&amp;terms=ARG*", "Fedora(koji)",
     "https://src.fedoraproject.org/rpms/ARG", "Fedora(git)",
     "https://packages.fedoraproject.org/search?query=ARG", "Fedora",
-    "https://madb.mageia.org/package/list/application/0/t_search/ARG", "Mageia",
+    "https://madb.mageialinux-online.org/show?distribution=cauldron&amp;architecture=x86_64&amp;rpm=ARG", "Mageia",
     "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
     "https://pkgs.alpinelinux.org/packages?name=ARG&amp;arch=x86_64", "Alpine",
     "https://packages.altlinux.org/en/search/?branch=sisyphus&amp;q=ARG", "ALTLinux",
