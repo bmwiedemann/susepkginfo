@@ -202,6 +202,7 @@ URLs = [
     "https://pkgs.alpinelinux.org/packages?name=ARG&amp;arch=x86_64", "Alpine",
     "https://packages.altlinux.org/en/search/?branch=sisyphus&amp;q=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
+    "https://gitlab.archlinux.org/archlinux/packaging/packages/ARG", "Arch(git)",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
     "https://packages.guix.gnu.org/search/?query=ARG", "Guix",
     "https://nixos.org/nixos/packages.html?query=ARG", "NixOS",
