@@ -200,7 +200,7 @@ URLs = [
     "https://madb.mageia.org/package/list/application/0/t_search/ARG", "Mageia",
     "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
     "https://pkgs.alpinelinux.org/packages?name=ARG&amp;arch=x86_64", "Alpine",
-    "https://packages.altlinux.org/en/search?branch=sisyphus&amp;name=ARG", "ALTLinux",
+    "https://packages.altlinux.org/en/search/?branch=sisyphus&amp;q=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
     "https://guix.gnu.org/packages/LETTER/#ARG", "Guix",
