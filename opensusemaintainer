@@ -203,7 +203,7 @@ URLs = [
     "https://packages.altlinux.org/en/search/?branch=sisyphus&amp;q=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
-    "https://guix.gnu.org/packages/LETTER/#ARG", "Guix",
+    "https://packages.guix.gnu.org/search/?query=ARG", "Guix",
     "https://nixos.org/nixos/packages.html?query=ARG", "NixOS",
     "https://www.freebsd.org/cgi/ports.cgi?query=ARG", "FreeBSD",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
