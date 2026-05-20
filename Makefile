@@ -55,8 +55,8 @@ db/opensusesrc.dbm db/pkgsrc.dbm db/provides.dbm: ${CACHEDIR}/opensuse/primary.x
 db/filepkg.dbm: ${CACHEDIR}/opensuse/filelists.xml.zst ./parser/parsefilelist.pl
 	zstd -cd $< | ./parser/parsefilelist.pl $$(basename $@)
 
-db/fedorasrc.dbm: cache/fedora/primary.xml.gz
-	zcat $< | ./parser/parseprimary.pl $$(basename $@)
+db/fedorasrc.dbm: cache/fedora/primary.xml.zst
+	zstd -cd $< | ./parser/parseprimary.pl $$(basename $@)
 
 db/centossrc.dbm: cache/centos/primary.xml.gz
 	zcat $< | ./parser/parseprimary.pl $$(basename $@)
