@@ -5,7 +5,7 @@ wget=wget --progress=dot:mega -N
 export PERL_HASH_SEED = 42
 
 all: sync
-update: db/opensusesrc.dbm db/filepkg.dbm db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/alpinelinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/centossrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
+update: db/opensusesrc.dbm db/filepkg.dbm db/pkgsrc.dbm db/provides.dbm db/develproject.dbm db/altlinuxsrc.dbm db/alpinelinuxsrc.dbm db/archlinuxsrc.dbm db/slackwaresrc.dbm db/ubuntusrc.dbm db/debiansrc.dbm db/mageiasrc.dbm db/fedorasrc.dbm db/gentoosrc.dbm db/voidlinuxsrc.dbm db/nixossrc.dbm db/guixsrc.dbm
 
 #db/provides.dbm: ${CACHEDIR}/opensuse/packages.gz
 #	gzip -cd $< | ./parser/parsepackages.pl
@@ -30,7 +30,7 @@ fetch:
 	cd ${CACHEDIR}/opensuse && ../../getfilelists http://$M/suse/opensuse/tumbleweed/repo/oss/
 	osc api '/search/package?match=@project="openSUSE:Factory"' > ${CACHEDIR}/opensuse/develproject.xml.new && mv ${CACHEDIR}/opensuse/develproject.xml.new ${CACHEDIR}/opensuse/develproject.xml
 	cd ${CACHEDIR}/fedora ; ../../getprimary http://$M/fedora/linux/development/rawhide/Everything/source/tree/
-	cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/8-stream/BaseOS/x86_64/os/
+	#cd ${CACHEDIR}/centos ; ../../getprimary http://$M/centos/8-stream/BaseOS/x86_64/os/
 	cd ${CACHEDIR}/mageia ; ${wget} http://$M/mageia/distrib/cauldron/SRPMS/core/release/media_info/info.xml.lzma
 	echo or http://$M/mageia/distrib/cauldron/SRPMS/core/release/repodata/
 	-cd ${CACHEDIR}/pclinuxos && ${wget} http://pclinuxos.mirror.wearetriple.com/pclinuxos/apt/pclinuxos/64bit/base/pkglist.x86_64.bz2
