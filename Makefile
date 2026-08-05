@@ -1,3 +1,9 @@
+# every build rule pipes a decompressor into a parser, and the parsers write
+# whatever they managed to read; without pipefail a truncated download becomes
+# a truncated database and make still succeeds
+SHELL=/bin/bash
+.SHELLFLAGS=-o pipefail -c
+
 CACHEDIR=cache
 M=ftp.gwdg.de/pub/linux
 T=root@vm11c6.zq1.de.
