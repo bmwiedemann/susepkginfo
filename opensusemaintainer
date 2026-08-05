@@ -196,13 +196,13 @@ URLs = [
     "https://packages.slackware.com/?search=ARG", "Slackware",
     "https://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
     "https://packages.debian.org/search?keywords=ARG", "Debian",
-    "https://koji.fedoraproject.org/koji/search?match=glob&amp;type=package&amp;terms=ARG*", "Fedora(koji)",
+    "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=ARG*", "Fedora(koji)",
     "https://src.fedoraproject.org/rpms/ARG", "Fedora(git)",
     "https://packages.fedoraproject.org/search?query=ARG", "Fedora",
-    "https://madb.mageialinux-online.org/show?distribution=cauldron&amp;architecture=x86_64&amp;rpm=ARG", "Mageia",
+    "https://madb.mageialinux-online.org/show?distribution=cauldron&architecture=x86_64&rpm=ARG", "Mageia",
     "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
-    "https://pkgs.alpinelinux.org/packages?name=ARG&amp;arch=x86_64", "Alpine",
-    "https://packages.altlinux.org/en/search/?branch=sisyphus&amp;q=ARG", "ALTLinux",
+    "https://pkgs.alpinelinux.org/packages?name=ARG&arch=x86_64", "Alpine",
+    "https://packages.altlinux.org/en/search/?branch=sisyphus&q=ARG", "ALTLinux",
     "https://aur.archlinux.org/packages/?K=ARG", "AUR",
     "https://gitlab.archlinux.org/archlinux/packaging/packages/ARG", "Arch(git)",
     "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
@@ -210,9 +210,9 @@ URLs = [
     "https://nixos.org/nixos/packages.html?query=ARG", "NixOS",
     "https://www.freebsd.org/cgi/ports.cgi?query=ARG", "FreeBSD",
     "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
-    "https://pmbs.links2linux.de/search?package=1&amp;name=1&amp;search_text=ARG", "Packman",
-    "https://build.opensuse.org/search?package=1&amp;name=1&amp;search_text=ARG", "OBS",
-    "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&amp;version=15.7&amp;arch=x86_64&amp;query=ARG", "SLE",
+    "https://pmbs.links2linux.de/search?package=1&name=1&search_text=ARG", "Packman",
+    "https://build.opensuse.org/search?package=1&name=1&search_text=ARG", "OBS",
+    "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.7&arch=x86_64&query=ARG", "SLE",
     "https://software.opensuse.org/search?q=ARG", "openSUSE",
     "https://release-monitoring.org/projects/search/?pattern=ARG", "release-monitoring",
     "https://pkgs.org/search/?q=ARG", "pkgs.org",
@@ -220,40 +220,39 @@ URLs = [
 ];
 function mysearch(val) {
      var x=document.getElementById("replace");
-     if(val.indexOf("/") > -1) {x.innerHTML=""; return;} // be smart and dont search for pathnames
-     HTML="You can also search for <strong>"+val+"</strong> in ";
+     x.textContent="";
+     if(val == '') {return;}
+     if(val.indexOf("/") > -1) {return;} // be smart and dont search for pathnames
+     x.appendChild(document.createTextNode("You can also search for "));
+     var s=document.createElement("strong");
+     s.textContent=val;
+     x.appendChild(s);
+     x.appendChild(document.createTextNode(" in "));
      for (var i = URLs.length-1; i>=0; i-=2) {
-         HTML+="<a href='"+URLs[i-1].replace("ARG",val).replace("LETTER",val[0].toUpperCase())+"'>"+URLs[i]+"</a> ";
+         var a=document.createElement("a");
+         a.href=URLs[i-1].replace(/ARG|LETTER/g, function(m) {
+             return encodeURIComponent(m == "ARG" ? val : val[0].toUpperCase());
+         });
+         a.textContent=URLs[i];
+         x.appendChild(a);
+         x.appendChild(document.createTextNode(" "));
      }
-     if(val == '') {HTML='';}
-     x.innerHTML=HTML;
 }
 function do_formsearch(val) {
-     window.location.href = "#"+val;
+     window.location.hash = val;
      mysearch(val);
 }
-seen={};
 function formsearch() {
-     var val=document.getElementById("searchtext").value;
-     do_formsearch(val);
-     // trigger async cache fetch
-     if(seen[val]) return;
-     /*Ab("//"+window.location.host+window.location.pathname+"?ajax=1&pkg="+val, function(c,s) {
-             return; // ignore result
-         }, 0);
-     seen[val]=1;
-     */
+     do_formsearch(document.getElementById("searchtext").value);
 }
 
 window.onload = function () {
-    var h=window.location.hash;
-    if(h.length>1) {
-        var v=h.replace("#","");
-        document.getElementById("searchtext").value=v;
-        mysearch(v);
-    } else {
-      do_formsearch(document.getElementById("searchtext").value);
+    var h=window.location.hash.replace(/^#/,"");
+    try { h=decodeURIComponent(h); } catch(e) { /* keep the raw fragment */ }
+    if(h) {
+        document.getElementById("searchtext").value=h;
     }
+    mysearch(document.getElementById("searchtext").value);
 };
         </script>}.br.
         "";
