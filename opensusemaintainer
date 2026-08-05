@@ -168,7 +168,16 @@ sub selftest()
 
 # main
 
-$html = header("text/html"). start_html(-title=>"package finder tool",
+$html = header(-type=>"text/html", -charset=>"utf-8",
+    -x_content_type_options=>"nosniff",
+    -referrer_policy=>"strict-origin-when-cross-origin",
+    -content_security_policy=>"default-src 'self'; ".
+        "script-src 'self' 'unsafe-inline' https://static.opensuse.org https://www.zq1.de; ".
+        "style-src 'self' 'unsafe-inline' https://static.opensuse.org; ".
+        "img-src 'self' data: https://static.opensuse.org; ".
+        "font-src 'self' data: https://static.opensuse.org; ".
+        "connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'").
+    start_html(-title=>"package finder tool",
 #-style=>"//www.zq1.de/code/css/pure-min.css",
 -head=>[qq{<link rel="stylesheet" href="//static.opensuse.org/chameleon-3.0/dist/css/chameleon.css" />},
 qq{<style type="text/css">
