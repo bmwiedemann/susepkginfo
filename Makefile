@@ -92,7 +92,7 @@ db/archlinuxsrc.dbm: cache/archlinux/*.db
 	for f in $^ ; do tar tf $$f ; done | ./parser/parsearchlinux.pl $$(basename $@)
 
 db/gentoosrc.dbm: cache/gentoo/gentoo/.git/refs/heads/master
-	for d in cache/gentoo/gentoo/*/* ; do ls $$d/*.ebuild 2>/dev/null |tail -1 ; done | ./parser/parsegentoosource.pl $$(basename $@)
+	for d in cache/gentoo/gentoo/*/* ; do (ls $$d/*.ebuild 2>/dev/null || true) | sort -V | tail -1 ; done | ./parser/parsegentoosource.pl $$(basename $@)
 
 db/voidlinuxsrc.dbm: cache/voidlinux/void-packages/.git/refs/heads/master
 	grep -B99 ^version= cache/voidlinux/void-packages/srcpkgs/*/template|./parser/parsevoidlinuxsource.pl $$(basename $@)
