@@ -24,6 +24,7 @@ our $expiry=31*24*60*60;
 our $html;
 our $data={};
 our $jsfile="maintainer.js";
+our $cssfile="maintainer.css";
 
 # url/label pairs for the "you can also search in" line, displayed in reverse
 # order. ARG is replaced with the search term, LETTER with its first letter.
@@ -102,6 +103,14 @@ if(document.readyState == "loading") {
     init();
 }
 EOJS
+}
+
+sub pagecss()
+{
+    return <<'EOCSS';
+.distri {font-weight: bold}
+.version {color: var(--pink)}
+EOCSS
 }
 
 sub esc($)
@@ -254,17 +263,14 @@ $html = header(-type=>"text/html", -charset=>"utf-8",
     -referrer_policy=>"strict-origin-when-cross-origin",
     -content_security_policy=>"default-src 'self'; ".
         "script-src 'self' https://static.opensuse.org; ".
-        "style-src 'self' 'unsafe-inline' https://static.opensuse.org; ".
+        "style-src 'self' https://static.opensuse.org; ".
         "img-src 'self' data: https://static.opensuse.org; ".
         "font-src 'self' data: https://static.opensuse.org; ".
         "connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'").
     start_html(-title=>"package finder tool",
 #-style=>"//www.zq1.de/code/css/pure-min.css",
 -head=>[qq{<link rel="stylesheet" href="//static.opensuse.org/chameleon-3.0/dist/css/chameleon.css" />},
-qq{<style type="text/css">
-.distri {font-weight: bold}
-.version {color: var(--pink)}
- </style>},
+  qq{<link rel="stylesheet" href="/$cssfile" />},
   qq{<script type="text/javascript" defer="defer" src="//static.opensuse.org/chameleon-3.0/dist/js/jquery.slim.js"></script>},
   qq{<script type="text/javascript" defer="defer" src="//static.opensuse.org/chameleon-3.0/dist/js/bootstrap.bundle.js"></script>},
   qq{<script type="text/javascript" defer="defer" src="//static.opensuse.org/chameleon-3.0/dist/js/chameleon.js"></script>},
@@ -284,6 +290,10 @@ if($input1 eq "robots.txt") {
 }
 if($input1 eq $jsfile) {
     print header(-type=>"application/javascript", -charset=>"utf-8").pagejs();
+    exit 0;
+}
+if($input1 eq $cssfile) {
+    print header(-type=>"text/css", -charset=>"utf-8").pagecss();
     exit 0;
 }
 if($input1 eq "favicon.ico") {
