@@ -17,7 +17,7 @@ my %filepkgmap;
 my %pkgsrcmap;
 my %binpath=qw(/bin 1 /sbin 1 /usr/bin 1 /usr/sbin 1);
 
-open(APPARMORFD, ">", "db/apparmor-list.txt");
+open(my $apparmorfd, ">", "db/apparmor-list.txt") or die "could not write db/apparmor-list.txt: $!";
 
 while(<>) {
     next unless m{^\./(.*)\.rpm:    (.*)};
@@ -43,7 +43,7 @@ while(<>) {
             #print "found executable in $p / $f\n";
         }
         if($file=~m{^/etc/apparmor|^/usr/share/apparmor|^/etc/apparmor.d}) {
-            print APPARMORFD "$file=$pkgname\n";
+            print $apparmorfd "$file=$pkgname\n";
         }
         #push(@{$data{$pkgname}{files}}, $file);
         #$info="$file $perm $linkcount, $owner, $group, $size, $date";

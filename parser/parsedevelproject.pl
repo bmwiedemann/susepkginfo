@@ -29,9 +29,12 @@ foreach my $pkg (keys(%$data)) {
 }
 foreach my $pkg (keys %develmap) {
         # resolve links within Factory
-        if($develmap{$pkg}->[0] eq "openSUSE:Factory") {
-                my $r=$develmap{$pkg}->[1];
-                $develmap{$pkg}=$develmap{$r};
+        next unless $develmap{$pkg}->[0] eq "openSUSE:Factory";
+        my $target=$develmap{$develmap{$pkg}->[1]};
+        if($target) {
+                $develmap{$pkg}=$target;
+        } else {
+                delete $develmap{$pkg};
         }
 }
 

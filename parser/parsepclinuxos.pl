@@ -19,17 +19,17 @@ my $in = \*STDIN;
 
 while(1) { # one loop processes one package index entry
     my $head = "";
-    read($in, $head, 16) or last;
+    (read($in, $head, 16)||0)==16 or last;
     my ($x0, $x1, $heads, $size) = unpack("NNNN", $head);
     #print "$heads $x0 $x1 $size\n";
     my @heads=();
     for(my $i=0; $i<$heads; ++$i) {
-        read($in, $heads[$i], 16) or die $!;
+        (read($in, $heads[$i], 16)||0)==16 or die "truncated index entry";
         $heads[$i] = [unpack("NNNN", $heads[$i])];
     }
     my $pkgdata = "";
     my %tags=();
-    read($in, $pkgdata, $size) or die $!;
+    (read($in, $pkgdata, $size)||0)==$size or die "truncated package data";
     for(my $i=0; $i<$heads; ++$i) {
         # tag, type, offs, type2?
         # https://pclinuxoshelp.com/index.php/Synaptic_and_the_Repositories
