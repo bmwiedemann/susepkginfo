@@ -150,11 +150,20 @@ sub get_distro_versions($)
     return \%ver;
 }
 
+my @selftests=(["filepkg", "/usr/bin/zgrep", "gzip"],
+    ["pkgsrc", "Mesa-32bit", "Mesa"],
+    ["provides", "Mesa(x86-64)", "Mesa"]);
+
+# returns the names of databases that are missing or stale
 sub selftest()
 {
-    lookupdbm("filepkg", "/usr/bin/zgrep") eq "gzip" or die "filepkg selftest failed";
-    lookupdbm("pkgsrc", "Mesa-32bit") eq "Mesa" or die "pkgsrc selftest failed";
-    lookupdbm("provides", "Mesa(x86-64)") eq "Mesa" or die "provides selftest failed";
+    my @bad;
+    for my $t (@selftests) {
+        my ($db, $key, $want)=@$t;
+        my $got=lookupdbm($db, $key);
+        push @bad, $db unless defined $got and $got eq $want;
+    }
+    return @bad;
 }
 
 # main
@@ -359,7 +368,10 @@ if(param) {
       }
     }
 }
-selftest;
+if(my @bad=selftest()) {
+    $html .= "<div class='alert alert-danger'>Database problem, results may be incomplete or stale: ".
+        esc(join(", ", @bad))."</div>";
+}
 $html .= "</div></div><div class='footer'><div class='container'><div class='d-flex justify-content-between'><div class='footer-copyright'>&copy; 2022 openSUSE contributors</div><div>To report issues, contribute or run your own, please <a href='https://github.com/bmwiedemann/susepkginfo'>use the github repo</a></div></div></div></div>".
     end_html;
 if(!param("ajax")) {
