@@ -19,7 +19,7 @@ use Time::HiRes qw"gettimeofday tv_interval";
 $CGI::DISABLE_UPLOADS=1;
 $CGI::POST_MAX=16*1024;
 
-our $debug=1;
+our $debug=$ENV{SUSEPKGINFO_DEBUG} || 0;
 our $factory="openSUSE:Factory";
 our $dbdir=$ENV{SUSEPKGINFO_DB} || "/home/aw/html/db.suse";
 our $cachedir="$dbdir/xml/";
