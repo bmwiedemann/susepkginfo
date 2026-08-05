@@ -1,3 +1,4 @@
 db/*.dbm
 db/apparmor-list.txt
 cache
+db/xml/

@@ -2,5 +2,14 @@
 
 run with podman:
 podman build -t opensusemaintainer .
-podman run -p 8080:80 opensusemaintainer
+podman run -p 8080:80 -v $PWD/db:/var/lib/wwwrun/db:z opensusemaintainer
 
+The image contains no package databases - it only serves them. Build them
+first (this downloads a few GB of distro metadata and takes a while):
+
+make fetch
+make update
+
+That fills db/ with the .dbm files the mount above exposes to the CGI.
+Without them every lookup fails and the page shows a "Database problem"
+banner.
