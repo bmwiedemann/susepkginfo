@@ -46,9 +46,12 @@ sub isfresh($)
 
 sub get($)
 {
-    open(my $pipe, "-|", qw"curl -s", $_[0]) or return "error $!";
+    open(my $pipe, "-|", qw"curl -sf --max-time 20 --", $_[0]) or return;
     local $/;
-    return scalar <$pipe>;
+    my $body=<$pipe>;
+    close $pipe;
+    return if $?; # let a failed fetch expire the cache instead of storing the error page
+    return $body;
 }
 
 sub cachedget
@@ -67,10 +70,12 @@ sub cachedget
         $xmldata=get($url);
         $html .= "<span class='text-success'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
         return unless $xmldata;
-        open(my $f, ">", "$cachefile.new") or warn "could not write cachefile: $!";
-        print $f $xmldata;
-        close $f;
-        rename("$cachefile.new", "$cachefile") or warn "could not rename cachefile";
+        my $tmp="$cachefile.$$.new";
+        if(open(my $f, ">", $tmp)) {
+            print $f $xmldata;
+            close $f;
+            rename($tmp, $cachefile) or unlink $tmp;
+        }
     }
     return $xmldata;
 }
@@ -86,9 +91,8 @@ sub lookupdbm($$)
 {
     my ($db,$key)=@_;
     my %dbmap;
-    my $result;
-    tie %dbmap, "DB_File", "$dbdir/$db.dbm", O_RDONLY;
-    $result=$dbmap{$key};
+    tie %dbmap, "DB_File", "$dbdir/$db.dbm", O_RDONLY or return;
+    my $result=$dbmap{$key};
     untie %dbmap;
     return $result;
 }
