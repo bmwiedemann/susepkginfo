@@ -17,8 +17,9 @@ use Time::HiRes qw"gettimeofday tv_interval";
 
 our $debug=1;
 our $factory="openSUSE:Factory";
-our $dbdir="/home/aw/html/db.suse";
+our $dbdir=$ENV{SUSEPKGINFO_DB} || "/home/aw/html/db.suse";
 our $cachedir="$dbdir/xml/";
+our $faviconfile=$ENV{SUSEPKGINFO_FAVICON} || "/home/aw/html/maintainerfavicon.ico";
 our $expiry=31*24*60*60;
 our $html;
 our $data={};
@@ -198,10 +199,19 @@ $input1=param("pkg") || "";
 $input1=~s/[<>"'&]//g; # sanitize
 
 if($input1 eq "robots.txt") {
+    print header("text/plain")."User-agent: *\nDisallow:\n";
     exit 0;
 }
 if($input1 eq "favicon.ico") {
-    print header("image/x-icon").`cat /home/aw/html/maintainerfavicon.ico`;
+    if(open(my $f, "<", $faviconfile)) {
+        binmode $f;
+        binmode STDOUT;
+        local $/;
+        print header(-type=>"image/x-icon", -charset=>"").<$f>;
+        close $f;
+    } else {
+        print header(-type=>"text/plain", -status=>"404 Not Found")."no favicon\n";
+    }
     exit 0;
 }
 
