@@ -13,7 +13,6 @@ sub usage()
 my $target=shift;
 if(!$target || @ARGV) {usage}
 
-my %data;
 my %srcmap;
 my %providesmap=();
 my %pkgsrcmap=();
@@ -23,16 +22,12 @@ my $provides;
 my $name;
 
 while(<>) {
-    if (m{^  <(\w+)>([^<]+)</\1>}) {
-        #print "matched $1 $2\n";
-        $data{lc($1)}=$2;
-    }
     if(m{^\s*<name>([^<>]+)</name>$}) {
         $name = $1
     }
     if(m{<version .*ver="([^"]+)".*/>}) {
         $version = $1;
-        $srcmap{$data{name}} = $version;
+        $srcmap{$name} = $version if defined $name;
     }
     if($opensuse && m{<rpm:provides>}) {
         $provides = 1;
