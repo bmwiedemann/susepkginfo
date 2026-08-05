@@ -23,6 +23,86 @@ our $faviconfile=$ENV{SUSEPKGINFO_FAVICON} || "/home/aw/html/maintainerfavicon.i
 our $expiry=31*24*60*60;
 our $html;
 our $data={};
+our $jsfile="maintainer.js";
+
+# url/label pairs for the "you can also search in" line, displayed in reverse
+# order. ARG is replaced with the search term, LETTER with its first letter.
+our @searchurls=(
+    "https://voidlinux.org/packages/?arch=x86_64&q=ARG" => "Void",
+    "https://packages.slackware.com/?search=ARG" => "Slackware",
+    "https://packages.ubuntu.com/search?keywords=ARG" => "Ubuntu",
+    "https://packages.debian.org/search?keywords=ARG" => "Debian",
+    "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=ARG*" => "Fedora(koji)",
+    "https://src.fedoraproject.org/rpms/ARG" => "Fedora(git)",
+    "https://packages.fedoraproject.org/search?query=ARG" => "Fedora",
+    "https://madb.mageialinux-online.org/show?distribution=cauldron&architecture=x86_64&rpm=ARG" => "Mageia",
+    "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/" => "MageiaSrc",
+    "https://pkgs.alpinelinux.org/packages?name=ARG&arch=x86_64" => "Alpine",
+    "https://packages.altlinux.org/en/search/?branch=sisyphus&q=ARG" => "ALTLinux",
+    "https://aur.archlinux.org/packages/?K=ARG" => "AUR",
+    "https://gitlab.archlinux.org/archlinux/packaging/packages/ARG" => "Arch(git)",
+    "https://www.archlinux.org/packages/?q=ARG" => "Arch Linux",
+    "https://packages.guix.gnu.org/search/?query=ARG" => "Guix",
+    "https://nixos.org/nixos/packages.html?query=ARG" => "NixOS",
+    "https://www.freebsd.org/cgi/ports.cgi?query=ARG" => "FreeBSD",
+    "https://packages.gentoo.org/packages/search?q=ARG" => "Gentoo",
+    "https://pmbs.links2linux.de/search?package=1&name=1&search_text=ARG" => "Packman",
+    "https://build.opensuse.org/search?package=1&name=1&search_text=ARG" => "OBS",
+    "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.7&arch=x86_64&query=ARG" => "SLE",
+    "https://software.opensuse.org/search?q=ARG" => "openSUSE",
+    "https://release-monitoring.org/projects/search/?pattern=ARG" => "release-monitoring",
+    "https://pkgs.org/search/?q=ARG" => "pkgs.org",
+    "https://repology.org/project/ARG" => "repology",
+);
+
+sub pagejs()
+{
+    return "var URLs = ".encode_json(\@searchurls).";\n".<<'EOJS';
+function mysearch(val) {
+    var x=document.getElementById("replace");
+    x.textContent="";
+    if(val == '') {return;}
+    if(val.indexOf("/") > -1) {return;} // be smart and dont search for pathnames
+    x.appendChild(document.createTextNode("You can also search for "));
+    var s=document.createElement("strong");
+    s.textContent=val;
+    x.appendChild(s);
+    x.appendChild(document.createTextNode(" in "));
+    for (var i = URLs.length-1; i>=0; i-=2) {
+        var a=document.createElement("a");
+        a.href=URLs[i-1].replace(/ARG|LETTER/g, function(m) {
+            return encodeURIComponent(m == "ARG" ? val : val[0].toUpperCase());
+        });
+        a.textContent=URLs[i];
+        x.appendChild(a);
+        x.appendChild(document.createTextNode(" "));
+    }
+}
+function do_formsearch(val) {
+    window.location.hash = val;
+    mysearch(val);
+}
+function formsearch() {
+    do_formsearch(document.getElementById("searchtext").value);
+}
+function init() {
+    var t=document.getElementById("searchtext");
+    var h=window.location.hash.replace(/^#/,"");
+    try { h=decodeURIComponent(h); } catch(e) { /* keep the raw fragment */ }
+    if(h) { t.value=h; }
+    t.addEventListener("input", formsearch);
+    t.addEventListener("change", formsearch);
+    t.focus();
+    t.select();
+    mysearch(t.value);
+}
+if(document.readyState == "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+} else {
+    init();
+}
+EOJS
+}
 
 sub esc($)
 {
@@ -173,7 +253,7 @@ $html = header(-type=>"text/html", -charset=>"utf-8",
     -x_content_type_options=>"nosniff",
     -referrer_policy=>"strict-origin-when-cross-origin",
     -content_security_policy=>"default-src 'self'; ".
-        "script-src 'self' 'unsafe-inline' https://static.opensuse.org; ".
+        "script-src 'self' https://static.opensuse.org; ".
         "style-src 'self' 'unsafe-inline' https://static.opensuse.org; ".
         "img-src 'self' data: https://static.opensuse.org; ".
         "font-src 'self' data: https://static.opensuse.org; ".
@@ -188,6 +268,7 @@ qq{<style type="text/css">
   qq{<script type="text/javascript" defer="defer" src="//static.opensuse.org/chameleon-3.0/dist/js/jquery.slim.js"></script>},
   qq{<script type="text/javascript" defer="defer" src="//static.opensuse.org/chameleon-3.0/dist/js/bootstrap.bundle.js"></script>},
   qq{<script type="text/javascript" defer="defer" src="//static.opensuse.org/chameleon-3.0/dist/js/chameleon.js"></script>},
+  qq{<script type="text/javascript" defer="defer" src="/$jsfile"></script>},
   qq{<link type="image/vnd.microsoft.icon" rel="icon" href="/favicon.ico" />},
   qq{<link rel="shortcut icon" href="/favicon.ico" />},
   qq{<meta name="viewport" content="width=400px, initial-scale=1" />}
@@ -199,6 +280,10 @@ $input1=~s/[<>"'&]//g; # sanitize
 
 if($input1 eq "robots.txt") {
     print header("text/plain")."User-agent: *\nDisallow:\n";
+    exit 0;
+}
+if($input1 eq $jsfile) {
+    print header(-type=>"application/javascript", -charset=>"utf-8").pagejs();
     exit 0;
 }
 if($input1 eq "favicon.ico") {
@@ -226,78 +311,10 @@ if(1) {
         start_form(-name=>"form", -method=>"get", -class=>"pure-form").
         "<p class='text-center'>Find details about openSUSE packages (e.g. maintainer and development project)</p>
         <p><fieldset class='form-inline justify-content-center'>".
-        textfield(-name=>'pkg', -class=>'form-control mr-1', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext", -onchange=>"formsearch()", -oninput=>"formsearch()").
+        textfield(-name=>'pkg', -class=>'form-control mr-1', -placeholder=>"Search", -accesskey=>"c", -id=>"searchtext").
         " in&nbsp;".popup_menu(-name=>'type',-default=>"auto", -class=>'custom-select mr-1', -values=>[sort keys %typeselect], -labels=>\%typeselect)." ".
         submit(-label=>"Search", -class=>'btn btn-primary')."</fieldset></p>". end_form.
-        '<div id="replace"></div>'.
-        qq'<script language="javascript" type="text/javascript">
-          document.form.pkg.focus();
-          document.form.pkg.select();'.
-qq{
-URLs = [
-    "https://voidlinux.org/packages/?arch=x86_64&q=ARG", "Void",
-    "https://packages.slackware.com/?search=ARG", "Slackware",
-    "https://packages.ubuntu.com/search?keywords=ARG", "Ubuntu",
-    "https://packages.debian.org/search?keywords=ARG", "Debian",
-    "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=ARG*", "Fedora(koji)",
-    "https://src.fedoraproject.org/rpms/ARG", "Fedora(git)",
-    "https://packages.fedoraproject.org/search?query=ARG", "Fedora",
-    "https://madb.mageialinux-online.org/show?distribution=cauldron&architecture=x86_64&rpm=ARG", "Mageia",
-    "https://svnweb.mageia.org/packages/cauldron/ARG/current/SPECS/", "MageiaSrc",
-    "https://pkgs.alpinelinux.org/packages?name=ARG&arch=x86_64", "Alpine",
-    "https://packages.altlinux.org/en/search/?branch=sisyphus&q=ARG", "ALTLinux",
-    "https://aur.archlinux.org/packages/?K=ARG", "AUR",
-    "https://gitlab.archlinux.org/archlinux/packaging/packages/ARG", "Arch(git)",
-    "https://www.archlinux.org/packages/?q=ARG", "Arch Linux",
-    "https://packages.guix.gnu.org/search/?query=ARG", "Guix",
-    "https://nixos.org/nixos/packages.html?query=ARG", "NixOS",
-    "https://www.freebsd.org/cgi/ports.cgi?query=ARG", "FreeBSD",
-    "https://packages.gentoo.org/packages/search?q=ARG", "Gentoo",
-    "https://pmbs.links2linux.de/search?package=1&name=1&search_text=ARG", "Packman",
-    "https://build.opensuse.org/search?package=1&name=1&search_text=ARG", "OBS",
-    "https://scc.suse.com/packages?name=SUSE%20Linux%20Enterprise%20Server&version=15.7&arch=x86_64&query=ARG", "SLE",
-    "https://software.opensuse.org/search?q=ARG", "openSUSE",
-    "https://release-monitoring.org/projects/search/?pattern=ARG", "release-monitoring",
-    "https://pkgs.org/search/?q=ARG", "pkgs.org",
-    "https://repology.org/project/ARG", "repology"
-];
-function mysearch(val) {
-     var x=document.getElementById("replace");
-     x.textContent="";
-     if(val == '') {return;}
-     if(val.indexOf("/") > -1) {return;} // be smart and dont search for pathnames
-     x.appendChild(document.createTextNode("You can also search for "));
-     var s=document.createElement("strong");
-     s.textContent=val;
-     x.appendChild(s);
-     x.appendChild(document.createTextNode(" in "));
-     for (var i = URLs.length-1; i>=0; i-=2) {
-         var a=document.createElement("a");
-         a.href=URLs[i-1].replace(/ARG|LETTER/g, function(m) {
-             return encodeURIComponent(m == "ARG" ? val : val[0].toUpperCase());
-         });
-         a.textContent=URLs[i];
-         x.appendChild(a);
-         x.appendChild(document.createTextNode(" "));
-     }
-}
-function do_formsearch(val) {
-     window.location.hash = val;
-     mysearch(val);
-}
-function formsearch() {
-     do_formsearch(document.getElementById("searchtext").value);
-}
-
-window.onload = function () {
-    var h=window.location.hash.replace(/^#/,"");
-    try { h=decodeURIComponent(h); } catch(e) { /* keep the raw fragment */ }
-    if(h) {
-        document.getElementById("searchtext").value=h;
-    }
-    mysearch(document.getElementById("searchtext").value);
-};
-        </script>}.br.
+        '<div id="replace"></div>'.br.
         "";
 }
 if(param) {
