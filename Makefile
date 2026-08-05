@@ -101,7 +101,7 @@ db/altlinuxsrc.dbm: cache/altlinux/src.list.xz
 	xz -cd $< | ./parser/parsealtlinuxsource.pl $$(basename $@)
 
 test:
-	for f in *.pl opensusemaintainer ; do \
-	    perl -wc $$f || exit 2; \
-	    ! grep $$'\t' $$f || exit 5 ;\
+	for f in parser/*.pl dblib.pm opensusemaintainer ; do \
+	    perl -I. -wc $$f || exit 2; \
+	    ! grep -q "$$(printf '\t')" $$f || exit 5 ;\
 	done
