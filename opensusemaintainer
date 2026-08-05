@@ -21,6 +21,7 @@ our $dbdir=$ENV{SUSEPKGINFO_DB} || "/home/aw/html/db.suse";
 our $cachedir="$dbdir/xml/";
 our $faviconfile=$ENV{SUSEPKGINFO_FAVICON} || "/home/aw/html/maintainerfavicon.ico";
 our $expiry=31*24*60*60;
+our $negexpiry=60*60;
 our $html;
 our $data={};
 our $jsfile="maintainer.js";
@@ -127,10 +128,11 @@ sub urlpath($)
 sub isfresh($)
 {
     my $cachefile=shift;
-    my $mtime=(stat($cachefile))[9];
+    my ($size, $mtime)=(stat($cachefile))[7,9];
+    return 0 unless $mtime;
+    return($mtime>time-$negexpiry) unless $size; # empty file records a failed fetch
     my $factor=1;
     $factor=3 if($cachefile=~m/source,openSUSE:Factory,.*,_meta/);
-    return 0 unless $mtime;
     return($mtime>time-$expiry*$factor);
 }
 
@@ -144,6 +146,19 @@ sub get($)
     return $body;
 }
 
+sub writecache($$)
+{
+    my ($cachefile, $xmldata)=@_;
+    my $tmp="$cachefile.$$.new";
+    open(my $f, ">", $tmp) or return;
+    # a short write would be cached as valid xml for a month, so check both
+    unless(print($f $xmldata) and close($f)) {
+        unlink $tmp;
+        return;
+    }
+    rename($tmp, $cachefile) or unlink $tmp;
+}
+
 sub cachedget
 {
     my $urlbase='https://api.opensuse.org/public';
@@ -151,22 +166,21 @@ sub cachedget
     my $url=$urlbase."/".join("/", @_);
     my $xmldata;
     if(isfresh($cachefile)) {
-        open(my $f, "<", $cachefile) or die "could not read cachefile: $!";
-        local $/;
-        $xmldata=<$f>;
-        close $f;
-    } else {
-        my $t=[gettimeofday];
-        $xmldata=get($url);
-        $html .= "<span class='text-success'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
-        return unless $xmldata;
-        my $tmp="$cachefile.$$.new";
-        if(open(my $f, ">", $tmp)) {
-            print $f $xmldata;
+        if(open(my $f, "<", $cachefile)) {
+            local $/;
+            $xmldata=<$f>;
             close $f;
-            rename($tmp, $cachefile) or unlink $tmp;
+            return $xmldata if length($xmldata||""); # empty marks a failed fetch
+            return;
         }
+        # unreadable cache is just a miss; dying here would blank the whole page
     }
+    my $t=[gettimeofday];
+    $xmldata=get($url);
+    $html .= "<span class='text-success'>OBS API request took ".tv_interval($t)." seconds</span>\n".br if($debug);
+    # cache the failure too, so one broken package cannot be replayed at the API
+    writecache($cachefile, $xmldata||"");
+    return unless $xmldata;
     return $xmldata;
 }
 
