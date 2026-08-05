@@ -1,9 +1,16 @@
-#!/bin/sh -x
+#!/bin/sh -ex
 # SPDX-License-Identifier: GPL-2.0-only
+# usage: getprimary <repo-base-url>
 
-wget -N $1/repodata/repomd.xml
-p=$(grep -o '[^"]*primary.xml.[a-z]*' repomd.xml)
-wget --progress=dot:mega -nc $1/$p
-n=$(basename $p)
-ext=$(echo $n | sed 's/.*\.//')
-ln -f $n primary.xml.$ext
+url=$1
+[ -n "$url" ] || { echo "usage: $0 <repo-base-url>" >&2; exit 1; }
+
+wget -N "$url/repodata/repomd.xml"
+p=$(grep -o '[^"]*primary\.xml\.[a-z]*' repomd.xml | head -n1)
+# repomd.xml is mirror-controlled, so accept only a plain relative path
+case "$p" in
+	""|/*|*..*) echo "unexpected primary path '$p'" >&2; exit 1 ;;
+esac
+wget --progress=dot:mega -nc "$url/$p"
+n=$(basename "$p")
+ln -f "$n" "primary.xml.${n##*.}"
