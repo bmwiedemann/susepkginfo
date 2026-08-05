@@ -14,6 +14,10 @@ use DB_File;
 use Fcntl;
 use Time::HiRes qw"gettimeofday tv_interval";
 
+# ScriptAlias routes the whole domain here, so every URL accepts POST.
+# Nothing reads a body; refuse them before CGI.pm spools uploads to /tmp.
+$CGI::DISABLE_UPLOADS=1;
+$CGI::POST_MAX=16*1024;
 
 our $debug=1;
 our $factory="openSUSE:Factory";
