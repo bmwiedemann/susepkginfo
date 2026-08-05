@@ -184,11 +184,32 @@ sub cachedget
     return $xmldata;
 }
 
+# XML::Parser hands back character strings while every other source here
+# (query string, DB_File, STDOUT) is octets; re-encode so they can be mixed
+sub encode_deep($);
+sub encode_deep($)
+{
+    my $ref=shift;
+    if(ref($ref) eq "HASH") {
+        for my $v (values %$ref) {
+            if(ref $v) { encode_deep($v) }
+            elsif(defined $v and utf8::is_utf8($v)) { utf8::encode($v) }
+        }
+    } elsif(ref($ref) eq "ARRAY") {
+        for my $v (@$ref) {
+            if(ref $v) { encode_deep($v) }
+            elsif(defined $v and utf8::is_utf8($v)) { utf8::encode($v) }
+        }
+    }
+    return $ref;
+}
+
 sub suseapi
 {
     my $xml=cachedget(@_);
     return unless $xml;
-    return eval{XMLin($xml, ForceArray => ["person", "repository", "path", "arch", "globalrole", "enable", "disable"])}||undef;
+    my $parsed=eval{XMLin($xml, ForceArray => ["person", "repository", "path", "arch", "globalrole", "enable", "disable"])}||undef;
+    return encode_deep($parsed);
 }
 
 sub lookupdbm($$)
