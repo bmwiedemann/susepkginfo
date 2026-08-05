@@ -312,9 +312,10 @@ $html = header(-type=>"text/html", -charset=>"utf-8",
     -content_security_policy=>"default-src 'self'; ".
         "script-src 'self' https://static.opensuse.org; ".
         "style-src 'self' https://static.opensuse.org; ".
-        "img-src 'self' data: https://static.opensuse.org; ".
-        "font-src 'self' data: https://static.opensuse.org; ".
-        "connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'").
+        "img-src 'self' data: https://static.opensuse.org; ". # chameleon.css uses url(data:) icons
+        "font-src 'self' https://static.opensuse.org; ".
+        "connect-src 'self'; object-src 'none'; base-uri 'self'; ".
+        "form-action 'self'; frame-ancestors 'none'").
     start_html(-title=>"package finder tool",
 #-style=>"//www.zq1.de/code/css/pure-min.css",
 -head=>[qq{<link rel="stylesheet" href="https://static.opensuse.org/chameleon-3.0/dist/css/chameleon.css" />},
