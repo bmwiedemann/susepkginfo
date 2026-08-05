@@ -1,46 +1,47 @@
 package dblib;
+use strict;
 use DB_File;
 use Fcntl;
 
-our $tmpdir='/dev/shm/parsearchives';
+our $dbdir='db';
 
 sub init()
 {
     print "writing out data...\n";
-    mkdir $tmpdir;
-    chmod 0755, $tmpdir or die "could not mkdir/chmod $tmpdir";
+    -d $dbdir or mkdir $dbdir or die "could not mkdir $dbdir: $!";
 }
 
 # input: arrayref
-# output: array
+# output: arrayref
 sub dedup($)
 {
-        my $arrayref=shift;
-        my %h;
-        my @a=();
-        foreach my $e (@$arrayref) {
-            next if($h{$e}++);
-            push(@a,$e);
-        }
-        return \@a;
+    my $arrayref=shift;
+    my %seen;
+    return [grep {!$seen{$_}++} @$arrayref];
 }
 
 sub writehash($$;$)
 {
     my ($filename, $hash, $dedup) = @_;
-    $filename="$tmpdir/$filename";
-    foreach my $k (sort keys(%$hash)) {
-        my $list=$hash->{$k};
-        next unless ref($list);
-        if($dedup) {$list=dedup($list)}
-        $hash->{$k}=join("\000", @$list); # convert into string
+    my %flat;
+    foreach my $k (keys(%$hash)) {
+        my $v=$hash->{$k};
+        next unless defined $v;
+        if(ref($v)) {
+            $v=dedup($v) if $dedup;
+            $v=join("\000", @$v);
+        }
+        $flat{$k}=$v;
     }
-    unlink $filename;
+    # build beside the target so that publishing is an atomic rename
+    my $tmp="$dbdir/$filename.$$.new";
+    unlink $tmp;
     my %dbmap;
-    tie %dbmap, "DB_File", $filename, O_RDWR|O_CREAT, 0666;
-    %dbmap=%$hash;
+    tie %dbmap, "DB_File", $tmp, O_RDWR|O_CREAT|O_EXCL, 0644
+        or die "could not create $tmp: $!";
+    %dbmap=%flat;
     untie %dbmap;
-    system("mv", $filename, "db/");
+    rename($tmp, "$dbdir/$filename") or die "could not rename $tmp: $!";
 }
 
 1;
