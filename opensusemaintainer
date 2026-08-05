@@ -23,6 +23,17 @@ our $expiry=31*24*60*60;
 our $html;
 our $data={};
 
+sub esc($)
+{
+    return CGI::escapeHTML(defined $_[0] ? $_[0] : "");
+}
+
+# for URL path segments; OBS project names legitimately contain ":"
+sub urlpath($)
+{
+    return uri_escape(defined $_[0] ? $_[0] : "", "^A-Za-z0-9\\-\\._~:");
+}
+
 sub isfresh($)
 {
     my $cachefile=shift;
@@ -89,32 +100,33 @@ sub printusers($)
     unless ($userdata && ($ps=$userdata->{person})) {
         $html .= "No persons associated with this package<br/>\n";
         return;
-    } else {
-        $html .= "<div class='userlist'><ul>";
-        foreach my $p (@$ps) {
-            my $user=$p->{userid};
-            if($user eq "--separatordummy--") { $html .= hr; next;}
-            next if $seen{$user.$p->{role}}++;
-            my $r=$p->{role};
-            if($r eq "bugowner") {$r=CGI::strong($r)}
-            $html .= qq{<li>$r: <a href="https://build.opensuse.org/users/$user">$user</a>\n</li>};
-        }
-        $html .= "</ul></div>\n";
     }
+    $html .= "<div class='userlist'><ul>";
+    foreach my $p (@$ps) {
+        next unless ref($p) eq "HASH";
+        my ($user, $role)=($p->{userid}, $p->{role});
+        next unless defined $user and defined $role;
+        if($user eq "--separatordummy--") { $html .= hr; next;}
+        next if $seen{$user.$role}++;
+        my $r=esc($role);
+        $r="<strong>$r</strong>" if $role eq "bugowner";
+        $html .= qq{<li>$r: <a href="https://build.opensuse.org/users/}.uri_escape($user).
+            qq{">}.esc($user).qq{</a>\n</li>};
+    }
+    $html .= "</ul></div>\n";
 }
 
 sub entrylist($@)
 {
     my $type=shift;
     my @a=@_;
-    if(@a>1) {
-       $html .= "<div class='text-warning'>found more than one package that provides this: <ol>";
-       foreach(@a) {
-           my $u = uri_escape($_);
-           $html .= li(a({href=>"?pkg=$u&type=$type"},$_));
-       }
-       $html .= "</ol></div>";
+    return unless @a>1;
+    $html .= "<div class='text-warning'>found more than one package that provides this: <ol>";
+    foreach my $e (@a) {
+        $html .= qq{<li><a href="?pkg=}.uri_escape($e).qq{&amp;type=}.uri_escape($type).
+            qq{">}.esc($e).qq{</a></li>};
     }
+    $html .= "</ol></div>";
 }
 
 sub lookupfilepkg($)
@@ -260,6 +272,7 @@ window.onload = function () {
 if(param) {
     my %output;
     my $type=param('type') || "auto";
+    $type="auto" unless exists $typeselect{$type};
     $type="fullpath" if $input1=~m{/};
     if($type ne "auto") {
         $output{$type}=$input1;
@@ -311,7 +324,8 @@ if(param) {
       for my $d (sort(keys(%$ver))) {
           my $v = $ver->{$d};
           if($v) {
-              $html .= "<div class='d-inline-block'>found $output{srcpkg}-<span class='version'>$v</span> in <span class='distri'>$d</span> ; </div> ";
+              $html .= "<div class='d-inline-block'>found ".esc($output{srcpkg}).
+                  "-<span class='version'>".esc($v)."</span> in <span class='distri'>".esc($d)."</span> ; </div> ";
           }
       }
       $html .= "<br/>";
@@ -321,12 +335,14 @@ if(param) {
             my @a=split("\000", $devel);
             $devel={project=>$a[0], package=>$a[1]};
             my @extrainfo;
-            if($output{fullpath}) {push @extrainfo, "<strong>Path:</strong> $output{fullpath}".br}
-            if($output{provides}) {push @extrainfo, "<strong>Provides:</strong> $output{provides}".br}
-            if($output{binpkg}) {push @extrainfo, "<strong>Binary-Package:</strong> $output{binpkg}".br}
-            $html .= join("",@extrainfo).qq!<strong>Source-Package:</strong> <a href="https://build.opensuse.org/package/show/$devel->{project}/$devel->{package}">$pkgname</a> (<a href="https://code.opensuse.org/package/$pkgname">git</a>) $ver->{opensuse}
-                <a href="https://build.opensuse.org/package/view_file/$devel->{project}/$devel->{package}/$pkgname.changes?expand=1">changes</a>!.br.
-                qq!<strong>devel-project:</strong> <a href="https://build.opensuse.org/project/show/$devel->{project}">$devel->{project}</a>!.br.
+            if($output{fullpath}) {push @extrainfo, "<strong>Path:</strong> ".esc($output{fullpath}).br}
+            if($output{provides}) {push @extrainfo, "<strong>Provides:</strong> ".esc($output{provides}).br}
+            if($output{binpkg}) {push @extrainfo, "<strong>Binary-Package:</strong> ".esc($output{binpkg}).br}
+            my ($eprj, $epkg, $ename)=(esc($devel->{project}), esc($devel->{package}), esc($pkgname));
+            my ($uprj, $upkg, $uname)=map {urlpath($_)} ($devel->{project}, $devel->{package}, $pkgname);
+            $html .= join("",@extrainfo).qq!<strong>Source-Package:</strong> <a href="https://build.opensuse.org/package/show/$uprj/$upkg">$ename</a> (<a href="https://code.opensuse.org/package/$uname">git</a>) !.esc($ver->{opensuse}).qq!
+                <a href="https://build.opensuse.org/package/view_file/$uprj/$upkg/$uname.changes?expand=1">changes</a>!.br.
+                qq!<strong>devel-project:</strong> <a href="https://build.opensuse.org/project/show/$uprj">$eprj</a>!.br.
                 "<strong>Package-Maintainers:</strong>\n";
             my $obsdata=suseapi("source", $devel->{project}, $devel->{package}, "_meta");
             $data->{obs}{pkg}=$obsdata;
@@ -335,7 +351,7 @@ if(param) {
             $obsdata=suseapi("source", $devel->{project}, "_meta");
             $data->{obs}{prj}=$obsdata;
             printusers($obsdata);
-        } else { $html .= "Bad package on $factory &#8658; <a href=\"https://software.opensuse.org/search?q=$output{srcpkg}\">search</a>" }
+        } else { $html .= "Bad package on ".esc($factory)." &#8658; <a href=\"https://software.opensuse.org/search?q=".uri_escape($output{srcpkg})."\">search</a>" }
       }
     }
 }
