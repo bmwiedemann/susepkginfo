@@ -118,6 +118,15 @@ sub pagecss()
 EOCSS
 }
 
+# these are generated per request but change only when this file does
+sub assetheader($$)
+{
+    my ($type, $charset)=@_;
+    return header(-type=>$type, -charset=>$charset,
+        -x_content_type_options=>"nosniff",
+        -cache_control=>"public, max-age=3600");
+}
+
 sub esc($)
 {
     return CGI::escapeHTML(defined $_[0] ? $_[0] : "");
@@ -328,11 +337,11 @@ if($input1 eq "robots.txt") {
     exit 0;
 }
 if($input1 eq $jsfile) {
-    print header(-type=>"application/javascript", -charset=>"utf-8").pagejs();
+    print assetheader("application/javascript", "utf-8").pagejs();
     exit 0;
 }
 if($input1 eq $cssfile) {
-    print header(-type=>"text/css", -charset=>"utf-8").pagecss();
+    print assetheader("text/css", "utf-8").pagecss();
     exit 0;
 }
 if($input1 eq "favicon.ico") {
@@ -340,7 +349,7 @@ if($input1 eq "favicon.ico") {
         binmode $f;
         binmode STDOUT;
         local $/;
-        print header(-type=>"image/x-icon", -charset=>"").<$f>;
+        print assetheader("image/x-icon", "").<$f>;
         close $f;
     } else {
         print header(-type=>"text/plain", -status=>"404 Not Found")."no favicon\n";
@@ -461,6 +470,7 @@ $html .= "</div></div><div class='footer'><div class='container'><div class='d-f
 if(!param("ajax")) {
     print $html;
 } else {
-    print header("application/json").
+    print header(-type=>"application/json", -charset=>"utf-8",
+        -x_content_type_options=>"nosniff").
       JSON::XS->new->pretty->canonical->encode($data);
 }
