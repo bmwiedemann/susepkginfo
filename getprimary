@@ -9,8 +9,13 @@ wget -N "$url/repodata/repomd.xml"
 p=$(grep -o '[^"]*primary\.xml\.[a-z]*' repomd.xml | head -n1)
 # repomd.xml is mirror-controlled, so accept only a plain relative path
 case "$p" in
-	""|/*|*..*) echo "unexpected primary path '$p'" >&2; exit 1 ;;
+	""|/*|*..*) echo "unexpected primary path: $p" >&2; exit 1 ;;
 esac
-wget --progress=dot:mega -nc "$url/$p"
 n=$(basename "$p")
+# the name is content-addressed, so an existing file needs no refetch - but
+# fetch via .part so an interrupted transfer never looks like a complete one
+if [ ! -e "$n" ]; then
+	wget --progress=dot:mega -O "$n.part" "$url/$p"
+	mv "$n.part" "$n"
+fi
 ln -f "$n" "primary.xml.${n##*.}"
